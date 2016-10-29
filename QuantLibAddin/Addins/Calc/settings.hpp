@@ -1,6 +1,6 @@
 
 /*  
- Copyright (C) 2006, 2007 Ferdinando Ametrano
+ Copyright (C) 2006, 2007, 2011 Ferdinando Ametrano
  
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -25,10 +25,17 @@
 #ifndef ql_calc_settings_hpp
 #define ql_calc_settings_hpp
 
-    sal_Int32 SAL_CALL qlSettingsEvaluationDate(
+    SEQSEQ(ANY) SAL_CALL qlSettingsEnforceTodaysHistoricFixings(
         const ANY &Trigger) throw(RuntimeException);
 
-    sal_Int32 SAL_CALL qlSettingsSetEvaluationDate(
+    SEQSEQ(ANY) SAL_CALL qlSettingsEvaluationDate(
+        const ANY &Trigger) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlSettingsSetEnforceTodaysHistoricFixings(
+        const sal_Int32 Boolean,
+        const ANY &Trigger) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlSettingsSetEvaluationDate(
         const ANY &EvalDate,
         const ANY &Trigger) throw(RuntimeException);
 

@@ -247,9 +247,9 @@ namespace QuantLib {
             // need to do backwards updating
             if (flowsFound)
             {
-                Size nextStepToUse  = std::min(currentStep-1, finalStepDone);
-                Size nextStepIndex = nextStepToUse+1;
-                if (nextStepIndex != Size(stepToUse)) // then we need to update V
+                Integer nextStepToUse  = std::min<Integer>(currentStep-1, finalStepDone);
+                Integer nextStepIndex = nextStepToUse+1;
+                if (nextStepIndex != stepToUse) // then we need to update V
                 {
 
                     const Matrix& thisPseudoRoot_= pseudoRootStructure_->pseudoRoot(currentStep);
@@ -602,9 +602,9 @@ namespace QuantLib {
             // need to do backwards updating
             if (flowsFound)
             {
-                Size nextStepToUse  = std::min(currentStep-1, finalStepDone);
-                Size nextStepIndex = nextStepToUse+1;
-                if (nextStepIndex != Size(stepToUse)) // then we need to update V
+                Integer nextStepToUse  = std::min<Integer>(currentStep-1, finalStepDone);
+                Integer nextStepIndex = nextStepToUse+1;
+                if (nextStepIndex != stepToUse) // then we need to update V
                 {
 
                     const Matrix& thisPseudoRoot_= pseudoRootStructure_->pseudoRoot(currentStep);
@@ -1013,9 +1013,9 @@ namespace QuantLib {
             // need to do backwards updating
             if (flowsFound)
             {
-                Size nextStepToUse  = std::min(currentStep-1, finalStepDone);
-                Size nextStepIndex = nextStepToUse+1;
-                if (nextStepIndex != Size(stepToUse)) // then we need to update V
+                Integer nextStepToUse  = std::min<Integer>(currentStep-1, finalStepDone);
+                Integer nextStepIndex = nextStepToUse+1;
+                if (nextStepIndex != stepToUse) // then we need to update V
                 {
 
                     const Matrix& thisPseudoRoot_= pseudoRootStructure_->pseudoRoot(currentStep);

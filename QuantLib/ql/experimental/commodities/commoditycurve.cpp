@@ -67,9 +67,9 @@ namespace QuantLib {
     void CommodityCurve::setPrices(std::map<Date, Real>& prices) {
         QL_REQUIRE(prices.size()>1, "too few prices");
 
-        dates_.empty();
-        data_.empty();
-        for (std::map<Date, Real>::const_iterator i = prices.begin(); i != prices.end(); i++) {
+        dates_.clear();
+        data_.clear();
+        for (std::map<Date, Real>::const_iterator i = prices.begin(); i != prices.end(); ++i) {
             dates_.push_back(i->first);
             data_.push_back(i->second);
         }

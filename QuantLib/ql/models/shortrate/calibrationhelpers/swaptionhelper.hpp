@@ -2,6 +2,7 @@
 
 /*
  Copyright (C) 2001, 2002, 2003 Sadruddin Rejeb
+ Copyright (C) 2015 Peter Caspers
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -26,15 +27,12 @@
 
 #include <ql/models/calibrationhelper.hpp>
 #include <ql/instruments/swaption.hpp>
+#include <ql/termstructures/volatility/volatilitytype.hpp>
 
 namespace QuantLib {
 
     //! calibration helper for ATM swaption
-    /*! \bug This helper does not register with the passed IBOR index
-             and with the evaluation date. Furthermore, the ATM
-             exercise rate is not recalculated when any of its
-             observables change.
-    */
+
     class SwaptionHelper : public CalibrationHelper {
       public:
         SwaptionHelper(const Period& maturity,
@@ -46,14 +44,110 @@ namespace QuantLib {
                        const DayCounter& floatingLegDayCounter,
                        const Handle<YieldTermStructure>& termStructure,
                        CalibrationHelper::CalibrationErrorType errorType
-                                      = CalibrationHelper::RelativePriceError);
+                                      = CalibrationHelper::RelativePriceError,
+                       const Real strike = Null<Real>(),
+                       const Real nominal = 1.0,
+                       const VolatilityType type = ShiftedLognormal,
+                       const Real shift = 0.0);
+
+        SwaptionHelper(const Date& exerciseDate,
+                       const Period& length,
+                       const Handle<Quote>& volatility,
+                       const boost::shared_ptr<IborIndex>& index,
+                       const Period& fixedLegTenor,
+                       const DayCounter& fixedLegDayCounter,
+                       const DayCounter& floatingLegDayCounter,
+                       const Handle<YieldTermStructure>& termStructure,
+                       CalibrationHelper::CalibrationErrorType errorType
+                                      = CalibrationHelper::RelativePriceError,
+                       const Real strike = Null<Real>(),
+                       const Real nominal = 1.0,
+                       const VolatilityType type = ShiftedLognormal,
+                       const Real shift = 0.0);
+
+        SwaptionHelper(const Date& exerciseDate,
+                       const Date& endDate,
+                       const Handle<Quote>& volatility,
+                       const boost::shared_ptr<IborIndex>& index,
+                       const Period& fixedLegTenor,
+                       const DayCounter& fixedLegDayCounter,
+                       const DayCounter& floatingLegDayCounter,
+                       const Handle<YieldTermStructure>& termStructure,
+                       CalibrationHelper::CalibrationErrorType errorType
+                                      = CalibrationHelper::RelativePriceError,
+                       const Real strike = Null<Real>(),
+                       const Real nominal = 1.0,
+                       const VolatilityType type = ShiftedLognormal,
+                       const Real shift = 0.0);
+
+        /*! \deprecated
+            Use the constructor taking an explicit volatility type
+        */
+        QL_DEPRECATED
+        SwaptionHelper(const Period& maturity,
+                       const Period& length,
+                       const Handle<Quote>& volatility,
+                       const boost::shared_ptr<IborIndex>& index,
+                       const Period& fixedLegTenor,
+                       const DayCounter& fixedLegDayCounter,
+                       const DayCounter& floatingLegDayCounter,
+                       const Handle<YieldTermStructure>& termStructure,
+                       CalibrationHelper::CalibrationErrorType errorType,
+                       const Real strike,
+                       const Real nominal,
+                       const Real shift);
+
+        /*! \deprecated
+            Use the constructor taking an explicit volatility type
+        */
+        QL_DEPRECATED
+        SwaptionHelper(const Date& exerciseDate,
+                       const Period& length,
+                       const Handle<Quote>& volatility,
+                       const boost::shared_ptr<IborIndex>& index,
+                       const Period& fixedLegTenor,
+                       const DayCounter& fixedLegDayCounter,
+                       const DayCounter& floatingLegDayCounter,
+                       const Handle<YieldTermStructure>& termStructure,
+                       CalibrationHelper::CalibrationErrorType errorType,
+                       const Real strike,
+                       const Real nominal,
+                       const Real shift);
+
+        /*! \deprecated
+            Use the constructor taking an explicit volatility type
+        */
+        QL_DEPRECATED
+        SwaptionHelper(const Date& exerciseDate,
+                       const Date& endDate,
+                       const Handle<Quote>& volatility,
+                       const boost::shared_ptr<IborIndex>& index,
+                       const Period& fixedLegTenor,
+                       const DayCounter& fixedLegDayCounter,
+                       const DayCounter& floatingLegDayCounter,
+                       const Handle<YieldTermStructure>& termStructure,
+                       CalibrationHelper::CalibrationErrorType errorType,
+                       const Real strike,
+                       const Real nominal,
+                       const Real shift);
+
         virtual void addTimesTo(std::list<Time>& times) const;
         virtual Real modelValue() const;
         virtual Real blackPrice(Volatility volatility) const;
+
+        boost::shared_ptr<VanillaSwap> underlyingSwap() const { calculate(); return swap_; }
+        boost::shared_ptr<Swaption> swaption() const { calculate(); return swaption_; }
+
       private:
-        Rate exerciseRate_;
-        boost::shared_ptr<VanillaSwap> swap_;
-        boost::shared_ptr<Swaption> swaption_;
+        void performCalculations() const;
+        mutable Date exerciseDate_, endDate_;
+        const Period maturity_, length_, fixedLegTenor_;
+        const boost::shared_ptr<IborIndex> index_;
+        const DayCounter fixedLegDayCounter_, floatingLegDayCounter_;
+        const Real strike_, nominal_;
+        mutable Rate exerciseRate_;
+        mutable boost::shared_ptr<VanillaSwap> swap_;
+        mutable boost::shared_ptr<Swaption> swaption_;
     };
 
 }

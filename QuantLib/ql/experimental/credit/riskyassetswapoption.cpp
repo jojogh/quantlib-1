@@ -24,12 +24,21 @@
 namespace QuantLib {
 
     RiskyAssetSwapOption::RiskyAssetSwapOption(
+                                 const boost::shared_ptr<RiskyAssetSwap>& asw,
+                                 const Date& expiry,
+                                 Rate marketSpread,
+                                 Volatility spreadVolatility)
+    : asw_(asw), expiry_(expiry),
+      marketSpread_(marketSpread),
+      spreadVolatility_(spreadVolatility) {}
+
+    RiskyAssetSwapOption::RiskyAssetSwapOption(
                                  bool payer,
                                  const boost::shared_ptr<RiskyAssetSwap>& asw,
                                  const Date& expiry,
                                  Rate marketSpread,
                                  Volatility spreadVolatility)
-    : payer_(payer), asw_(asw), expiry_(expiry),
+    : asw_(asw), expiry_(expiry),
       marketSpread_(marketSpread),
       spreadVolatility_(spreadVolatility) {}
 
@@ -48,7 +57,7 @@ namespace QuantLib {
 
         Date today = Settings::instance().evaluationDate();
         Time expiryTime = Actual365Fixed().yearFraction(today, expiry_);
-        Real stdDev = spreadVolatility_ * sqrt(expiryTime);
+        Real stdDev = spreadVolatility_ * std::sqrt(expiryTime);
         Real d = (asw_->spread() - marketSpread_) / stdDev;
         Real A0 = asw_->nominal() * asw_->floatAnnuity();
 

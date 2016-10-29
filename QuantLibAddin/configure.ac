@@ -1,7 +1,7 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([QuantLibAddin], [1.2.0],
+AC_INIT([QuantLibAddin], [1.8.0],
         [quantlib-dev@lists.sourceforge.net],
         [QuantLibAddin])
 AC_PREREQ(2.50)
@@ -67,11 +67,11 @@ AC_ARG_ENABLE([addin-cpp],
                              [build C++ addin and clients [[default=no]]]),
                              [qla_build_cpp=$enableval],
                              [qla_build_cpp=omitted])
-#AC_ARG_ENABLE([addin-calc],
-#              AC_HELP_STRING([--enable-addin-calc],
-#                             [build Calc addin [[default=no]]]),
-#                             [qla_build_calc=$enableval],
-#                             [qla_build_calc=omitted])
+AC_ARG_ENABLE([addin-calc],
+              AC_HELP_STRING([--enable-addin-calc],
+                             [build Calc addin [[default=no]]]),
+                             [qla_build_calc=$enableval],
+                             [qla_build_calc=omitted])
 #AC_ARG_ENABLE([addin-c],
 #              AC_HELP_STRING([--enable-addin-c],
 #                             [build C addin and clients [[default=no]]]),

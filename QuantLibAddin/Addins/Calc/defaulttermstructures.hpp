@@ -25,15 +25,28 @@
 #ifndef ql_calc_defaulttermstructures_hpp
 #define ql_calc_defaulttermstructures_hpp
 
-    STRING SAL_CALL qlFlatHazardRate(
-        const STRING &ObjectId,
+    SEQSEQ(ANY) SAL_CALL qlDefaultTSDefaultProbability(
+        const ANY &ObjectId,
+        const SEQSEQ(ANY) &Dates,
+        const sal_Int32 AllowExtrapolation,
+        const ANY &Trigger) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlFlatHazardRate(
+        const ANY &ObjectId,
         const ANY &NDays,
         const ANY &Calendar,
-        const STRING &Rate,
+        const ANY &Rate,
         const ANY &DayCounter,
-        const ANY &Permanent,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlRelinkableHandleDefaultProbabilityTermStructure(
+        const ANY &ObjectId,
+        const ANY &CurrentLink,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
 
 

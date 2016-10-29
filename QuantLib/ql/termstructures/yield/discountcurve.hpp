@@ -3,7 +3,8 @@
 /*
  Copyright (C) 2002, 2003 Decillion Pty(Ltd)
  Copyright (C) 2005, 2006, 2008, 2009 StatPro Italia srl
- Copyright (C) 2009 Ferdinando Ametrano
+ Copyright (C) 2009, 2015 Ferdinando Ametrano
+ Copyright (C) 2015 Paolo Mazzocchi
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -113,6 +114,8 @@ namespace QuantLib {
 
     template <class T>
     inline Date InterpolatedDiscountCurve<T>::maxDate() const {
+        if (this->maxDate_ != Date())
+            return this->maxDate_;
         return dates_.back();
     }
 
@@ -204,7 +207,7 @@ namespace QuantLib {
                                  const std::vector<Handle<Quote> >& jumps,
                                  const std::vector<Date>& jumpDates,
                                  const T& interpolator)
-    : YieldTermStructure(dates.front(), calendar, dayCounter, jumps, jumpDates),
+    : YieldTermStructure(dates.at(0), calendar, dayCounter, jumps, jumpDates),
       InterpolatedCurve<T>(std::vector<Time>(), discounts, interpolator),
       dates_(dates)
     {
@@ -218,7 +221,7 @@ namespace QuantLib {
                                  const DayCounter& dayCounter,
                                  const Calendar& calendar,
                                  const T& interpolator)
-    : YieldTermStructure(dates.front(), calendar, dayCounter),
+    : YieldTermStructure(dates.at(0), calendar, dayCounter),
       InterpolatedCurve<T>(std::vector<Time>(), discounts, interpolator),
       dates_(dates)
     {
@@ -231,7 +234,7 @@ namespace QuantLib {
                                  const std::vector<DiscountFactor>& discounts,
                                  const DayCounter& dayCounter,
                                  const T& interpolator)
-    : YieldTermStructure(dates.front(), Calendar(), dayCounter),
+    : YieldTermStructure(dates.at(0), Calendar(), dayCounter),
       InterpolatedCurve<T>(std::vector<Time>(), discounts, interpolator),
       dates_(dates)
     {

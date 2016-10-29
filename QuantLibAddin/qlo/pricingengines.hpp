@@ -4,6 +4,8 @@
  Copyright (C) 2006, 2012 Ferdinando Ametrano
  Copyright (C) 2006 Cristina Duminuco
  Copyright (C) 2007 Eric Ehlers
+ Copyright (C) 2015 Paolo Mazzocchi
+ Copyright (C) 2016 Stefano Fondi
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -34,6 +36,7 @@ namespace QuantLib {
     class SwaptionVolatilityStructure;
     class OptionletVolatilityStructure;
     class BlackCapFloorEngine;
+    class BachelierCapFloorEngine;
     class AnalyticCapFloorEngine;
     class MarketModelCapFloorEngine;
     class BlackCalculator;
@@ -45,6 +48,9 @@ namespace QuantLib {
     class DiscountingBondEngine;
     class DiscountingSwapEngine;
     class GeneralizedBlackScholesProcess;
+    class OneFactorAffineModel;
+    class G2;
+	class Currency;
 
     template <class T>
     class Handle;
@@ -116,12 +122,35 @@ namespace QuantLibAddin {
             bool permanent);
     };
 
+    class BachelierCapFloorEngine : public PricingEngine {
+      public:
+        BachelierCapFloorEngine(
+            const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+            const QuantLib::Handle<QuantLib::YieldTermStructure>& discountCurve,
+            const QuantLib::Handle<QuantLib::Quote>& vol,
+            const QuantLib::DayCounter& dayCounter,
+            bool permanent);
+        BachelierCapFloorEngine(
+            const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+            const QuantLib::Handle<QuantLib::YieldTermStructure>& discountCurve,
+            const QuantLib::Handle<QuantLib::OptionletVolatilityStructure>&,
+            bool permanent);
+    };
+
     class AnalyticCapFloorEngine : public PricingEngine {
       public:
         AnalyticCapFloorEngine(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
             const boost::shared_ptr<QuantLib::AffineModel>& model,
             bool permanent);
+        //AnalyticCapFloorEngine(
+        //    const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+        //    const boost::shared_ptr<QuantLib::G2>& model,
+        //    bool permanent);
+        //AnalyticCapFloorEngine(
+        //    const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+        //    const boost::shared_ptr<QuantLib::LiborForwardModel>& model,
+        //    bool permanent);
     };
 
     class BlackCalculator : public ObjectHandler::LibraryObject<QuantLib::BlackCalculator> {
@@ -173,6 +202,82 @@ namespace QuantLibAddin {
             const QuantLib::Handle<QuantLib::YieldTermStructure>& discountCurve,
             bool permanent);
     };
+
+    class JamshidianSwaptionEngine : public PricingEngine {
+    public:
+        JamshidianSwaptionEngine(
+            const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+            const boost::shared_ptr<QuantLib::OneFactorAffineModel>& model,
+            const QuantLib::Handle<QuantLib::YieldTermStructure>& termStructure,
+            bool permanent);
+    };
+
+    class TreeSwaptionEngine : public PricingEngine {
+    public:
+        TreeSwaptionEngine(
+            const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+            const boost::shared_ptr<QuantLib::OneFactorAffineModel>& model,
+            QuantLib::Size timeSteps,
+            const QuantLib::Handle<QuantLib::YieldTermStructure>& termStructure,
+            bool permanent);
+    };
+
+    class G2SwaptionEngine : public PricingEngine {
+    public:
+        // range is the number of standard deviations to use in the
+        // exponential term of the integral for the european swaption.
+        // intervals is the number of intervals to use in the integration.
+        G2SwaptionEngine(
+               const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+               const boost::shared_ptr<QuantLib::G2>& model,
+               QuantLib::Real range,
+               QuantLib::Size intervals,
+               bool permanent);
+    };
+
+	class DiscountingFxForwardEngine : public PricingEngine{
+	public:
+		DiscountingFxForwardEngine(
+			const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+			const QuantLib::Currency& ccy1,
+			const QuantLib::Handle<QuantLib::YieldTermStructure>& currency1Discountcurve,
+			const QuantLib::Currency& ccy2,
+			const QuantLib::Handle<QuantLib::YieldTermStructure>& currency2Discountcurve,
+			QuantLib::Handle<QuantLib::Quote>& spotFX,
+			bool includeSettlementDateFlows,
+			const QuantLib::Date& settlementDate,
+			const QuantLib::Date& npvDate,
+			bool permanent);
+	};
+
+	class CrossCcySwapEngine : public PricingEngine{
+	public:
+		CrossCcySwapEngine(			
+			const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+			const QuantLib::Currency& ccy1,
+			const QuantLib::Handle<QuantLib::YieldTermStructure>& currency1Discountcurve,
+			const QuantLib::Currency& ccy2,
+			const QuantLib::Handle<QuantLib::YieldTermStructure>& currency2Discountcurve,
+			QuantLib::Handle<QuantLib::Quote>& spotFX,
+			bool includeSettlementDateFlows,
+			const QuantLib::Date& settlementDate,
+			const QuantLib::Date& npvDate,
+			bool permanent);
+	};
+
+	class DiscountingCurrencySwapEngine : public PricingEngine{
+	public:
+		DiscountingCurrencySwapEngine(
+			const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+			const std::vector<QuantLib::Handle<QuantLib::YieldTermStructure> >& discountCurves,
+			const std::vector<QuantLib::Handle<QuantLib::Quote> >& fxQuotes, 
+			const std::vector<QuantLib::Currency>& currencies,
+			const QuantLib::Currency& npvCurrency,
+			bool includeSettlementDateFlows,
+			const QuantLib::Date& settlementDate,
+			const QuantLib::Date& npvDate,
+			bool permanent);
+	};
 }
 
 #endif

@@ -6,10 +6,12 @@
     <categoryName>accountingengines</categoryName>
     <categoryName>assetswap</categoryName>
     <categoryName>alphaform</categoryName>
+    <categoryName>basketlossmodels</categoryName>
     <categoryName>browniangenerators</categoryName>
     <categoryName>bonds</categoryName>
     <categoryName>btp</categoryName>
     <categoryName>calendar</categoryName>
+    <categoryName>calibrationhelpers</categoryName>
     <categoryName>capfloor</categoryName>
     <categoryName>capletvolstructure</categoryName>
     <categoryName>cmsmarket</categoryName>
@@ -20,6 +22,7 @@
     <categoryName>curvestate</categoryName>
     <categoryName>date</categoryName>
     <categoryName>daycounter</categoryName>
+    <categoryName>defaultbasket</categoryName>
     <categoryName>defaulttermstructures</categoryName>
     <categoryName>driftcalculators</categoryName>
     <categoryName>exercise</categoryName>
@@ -29,12 +32,14 @@
     <categoryName>index</categoryName>
     <categoryName>instruments</categoryName>
     <categoryName>interpolation</categoryName>
+    <categoryName>latentmodels</categoryName>
     <categoryName>leg</categoryName>
     <categoryName>marketmodels</categoryName>
     <categoryName>marketmodelevolvers</categoryName>
     <categoryName>mathf</categoryName>
     <categoryName>optimization</categoryName>
     <categoryName>options</categoryName>
+	<categoryName>fx</categoryName>
     <categoryName>overnightindexedswap</categoryName>
     <categoryName>payoffs</categoryName>
     <categoryName>piecewiseyieldcurve</categoryName>

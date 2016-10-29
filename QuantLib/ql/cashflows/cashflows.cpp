@@ -26,6 +26,7 @@
 #include <ql/math/solvers1d/brent.hpp>
 #include <ql/math/solvers1d/newtonsafe.hpp>
 #include <ql/cashflows/couponpricer.hpp>
+#include <ql/patterns/visitor.hpp>
 #include <ql/quotes/simplequote.hpp>
 #include <ql/termstructures/yield/zerospreadedtermstructure.hpp>
 
@@ -457,7 +458,8 @@ namespace QuantLib {
         Real totalNPV = 0.0;
         for (Size i=0; i<leg.size(); ++i) {
             if (!leg[i]->hasOccurred(settlementDate,
-                                     includeSettlementDateFlows))
+                                     includeSettlementDateFlows) &&
+                !leg[i]->tradingExCoupon(settlementDate))
                 totalNPV += leg[i]->amount() *
                             discountCurve.discount(leg[i]->date());
         }
@@ -482,7 +484,8 @@ namespace QuantLib {
         BPSCalculator calc(discountCurve);
         for (Size i=0; i<leg.size(); ++i) {
             if (!leg[i]->hasOccurred(settlementDate,
-                                     includeSettlementDateFlows))
+                                     includeSettlementDateFlows) &&
+                !leg[i]->tradingExCoupon(settlementDate))
                 leg[i]->accept(calc);
         }
         return basisPoint_*calc.bps()/discountCurve.discount(npvDate);
@@ -502,19 +505,22 @@ namespace QuantLib {
             return;
         }
 
-        BPSCalculator calc(discountCurve);
         for (Size i=0; i<leg.size(); ++i) {
             CashFlow& cf = *leg[i];
             if (!cf.hasOccurred(settlementDate,
-                                includeSettlementDateFlows)) {
-                npv += cf.amount() *
-                       discountCurve.discount(cf.date());
-                cf.accept(calc);
+                                includeSettlementDateFlows) &&
+                !cf.tradingExCoupon(settlementDate)) {
+                boost::shared_ptr<Coupon> cp =
+                    boost::dynamic_pointer_cast<Coupon>(leg[i]);
+                Real df = discountCurve.discount(cf.date());
+                npv += cf.amount() * df;
+                if(cp != NULL)
+                    bps += cp->nominal() * cp->accrualPeriod() * df;
             }
         }
         DiscountFactor d = discountCurve.discount(npvDate);
         npv /= d;
-        bps = basisPoint_ * calc.bps() / d;
+        bps = basisPoint_ * bps / d;
     }
 
     Rate CashFlows::atmRate(const Leg& leg,
@@ -535,7 +541,8 @@ namespace QuantLib {
         for (Size i=0; i<leg.size(); ++i) {
             CashFlow& cf = *leg[i];
             if (!cf.hasOccurred(settlementDate,
-                                includeSettlementDateFlows)) {
+                                includeSettlementDateFlows) &&
+                !cf.tradingExCoupon(settlementDate)) {
                 npv += cf.amount() *
                        discountCurve.discount(cf.date());
                 cf.accept(calc);
@@ -588,17 +595,45 @@ namespace QuantLib {
 
             Real P = 0.0;
             Real dPdy = 0.0;
+            Time t = 0.0;
+            Date lastDate = npvDate;
+            Date refStartDate, refEndDate;
             const DayCounter& dc = y.dayCounter();
             for (Size i=0; i<leg.size(); ++i) {
-                if (!leg[i]->hasOccurred(settlementDate,
-                                         includeSettlementDateFlows)) {
-                    Time t = dc.yearFraction(npvDate,
-                                             leg[i]->date());
-                    Real c = leg[i]->amount();
-                    DiscountFactor B = y.discountFactor(t);
-                    P += c * B;
-                    dPdy += t * c * B;
+                if (leg[i]->hasOccurred(settlementDate,
+                                        includeSettlementDateFlows))
+                    continue;
+
+                Real c = leg[i]->amount();
+                if (leg[i]->tradingExCoupon(settlementDate)) {
+                    c = 0.0;
                 }
+
+                Date couponDate = leg[i]->date();
+                shared_ptr<Coupon> coupon =
+                    boost::dynamic_pointer_cast<Coupon>(leg[i]);
+                if (coupon) {
+                    refStartDate = coupon->referencePeriodStart();
+                    refEndDate = coupon->referencePeriodEnd();
+                } else {
+                    if (lastDate == npvDate) {
+                        // we don't have a previous coupon date,
+                        // so we fake it
+                        refStartDate = couponDate - 1*Years;
+                    } else  {
+                        refStartDate = lastDate;
+                    }
+                    refEndDate = couponDate;
+                }
+
+                t += dc.yearFraction(lastDate, couponDate,
+                                     refStartDate, refEndDate);
+
+                DiscountFactor B = y.discountFactor(t);
+                P += c * B;
+                dPdy += t * c * B;
+                
+                lastDate = couponDate;
             }
             if (P == 0.0) // no cashflows
                 return 0.0;
@@ -620,40 +655,66 @@ namespace QuantLib {
                 npvDate = settlementDate;
 
             Real P = 0.0;
+            Time t = 0.0;
             Real dPdy = 0.0;
             Rate r = y.rate();
             Natural N = y.frequency();
+            Date lastDate = npvDate;
+            Date refStartDate, refEndDate;
             const DayCounter& dc = y.dayCounter();
             for (Size i=0; i<leg.size(); ++i) {
-                if (!leg[i]->hasOccurred(settlementDate,
-                                         includeSettlementDateFlows)) {
-                    Time t = dc.yearFraction(npvDate,
-                                             leg[i]->date());
-                    Real c = leg[i]->amount();
-                    DiscountFactor B = y.discountFactor(t);
+                if (leg[i]->hasOccurred(settlementDate,
+                                        includeSettlementDateFlows))
+                    continue;
 
-                    P += c * B;
-                    switch (y.compounding()) {
-                      case Simple:
-                        dPdy -= c * B*B * t;
-                        break;
-                      case Compounded:
-                        dPdy -= c * t * B/(1+r/N);
-                        break;
-                      case Continuous:
-                        dPdy -= c * B * t;
-                        break;
-                      case SimpleThenCompounded:
-                        if (t<=1.0/N)
-                            dPdy -= c * B*B * t;
-                        else
-                            dPdy -= c * t * B/(1+r/N);
-                        break;
-                      default:
-                        QL_FAIL("unknown compounding convention (" <<
-                                Integer(y.compounding()) << ")");
-                    }
+                Real c = leg[i]->amount();
+                if (leg[i]->tradingExCoupon(settlementDate)) {
+                    c = 0.0;
                 }
+
+                Date couponDate = leg[i]->date();
+                shared_ptr<Coupon> coupon =
+                    boost::dynamic_pointer_cast<Coupon>(leg[i]);
+                if (coupon) {
+                    refStartDate = coupon->referencePeriodStart();
+                    refEndDate = coupon->referencePeriodEnd();
+                } else {
+                    if (lastDate == npvDate) {
+                        // we don't have a previous coupon date,
+                        // so we fake it
+                        refStartDate = couponDate - 1*Years;
+                    } else  {
+                        refStartDate = lastDate;
+                    }
+                    refEndDate = couponDate;
+                }
+                
+                t += dc.yearFraction(lastDate, couponDate,
+                                     refStartDate, refEndDate);
+                
+                DiscountFactor B = y.discountFactor(t);
+                P += c * B;
+                switch (y.compounding()) {
+                  case Simple:
+                    dPdy -= c * B*B * t;
+                    break;
+                  case Compounded:
+                    dPdy -= c * t * B/(1+r/N);
+                    break;
+                  case Continuous:
+                    dPdy -= c * B * t;
+                    break;
+                  case SimpleThenCompounded:
+                    if (t<=1.0/N)
+                        dPdy -= c * B*B * t;
+                    else
+                        dPdy -= c * t * B/(1+r/N);
+                    break;
+                  default:
+                    QL_FAIL("unknown compounding convention (" <<
+                            Integer(y.compounding()) << ")");
+                }
+                lastDate = couponDate;
             }
 
             if (P == 0.0) // no cashflows
@@ -724,7 +785,8 @@ namespace QuantLib {
                         signChanges = 0;
                 for (Size i = 0; i < leg_.size(); ++i) {
                     if (!leg_[i]->hasOccurred(settlementDate_,
-                                              includeSettlementDateFlows_)) {
+                                              includeSettlementDateFlows_) &&
+                        !leg_[i]->tradingExCoupon(settlementDate_)) {
                         Integer thisSign = sign(leg_[i]->amount());
                         if (lastSign * thisSign < 0) // sign change
                             signChanges++;
@@ -796,11 +858,15 @@ namespace QuantLib {
 
             Date couponDate = leg[i]->date();
             Real amount = leg[i]->amount();
+            if (leg[i]->tradingExCoupon(settlementDate)) {
+                amount = 0.0;
+            }
+
             shared_ptr<Coupon> coupon =
                 boost::dynamic_pointer_cast<Coupon>(leg[i]);
             if (coupon) {
-                refStartDate = coupon->accrualStartDate();
-                refEndDate = coupon->accrualEndDate();
+                refStartDate = coupon->referencePeriodStart();
+                refEndDate = coupon->referencePeriodEnd();
             } else {
                 if (lastDate == npvDate) {
                     // we don't have a previous coupon date,
@@ -958,38 +1024,65 @@ namespace QuantLib {
         const DayCounter& dc = y.dayCounter();
 
         Real P = 0.0;
+        Time t = 0.0;
         Real d2Pdy2 = 0.0;
         Rate r = y.rate();
         Natural N = y.frequency();
+        Date lastDate = npvDate;
+        Date refStartDate, refEndDate;
         for (Size i=0; i<leg.size(); ++i) {
-            if (!leg[i]->hasOccurred(settlementDate,
-                                     includeSettlementDateFlows)) {
-                Time t = dc.yearFraction(npvDate,
-                                         leg[i]->date());
-                Real c = leg[i]->amount();
-                DiscountFactor B = y.discountFactor(t);
-                P += c * B;
-                switch (y.compounding()) {
-                  case Simple:
-                    d2Pdy2 += c * 2.0*B*B*B*t*t;
-                    break;
-                  case Compounded:
-                    d2Pdy2 += c * B*t*(N*t+1)/(N*(1+r/N)*(1+r/N));
-                    break;
-                  case Continuous:
-                    d2Pdy2 += c * B*t*t;
-                    break;
-                  case SimpleThenCompounded:
-                    if (t<=1.0/N)
-                        d2Pdy2 += c * 2.0*B*B*B*t*t;
-                    else
-                        d2Pdy2 += c * B*t*(N*t+1)/(N*(1+r/N)*(1+r/N));
-                    break;
-                  default:
-                    QL_FAIL("unknown compounding convention (" <<
-                            Integer(y.compounding()) << ")");
-                }
+            if (leg[i]->hasOccurred(settlementDate,
+                                        includeSettlementDateFlows))
+                continue;
+            
+            Real c = leg[i]->amount();
+            if (leg[i]->tradingExCoupon(settlementDate)) {
+                c = 0.0;
             }
+
+            Date couponDate = leg[i]->date();
+            shared_ptr<Coupon> coupon =
+                boost::dynamic_pointer_cast<Coupon>(leg[i]);
+            if (coupon) {
+                refStartDate = coupon->referencePeriodStart();
+                refEndDate = coupon->referencePeriodEnd();
+            } else {
+                if (lastDate == npvDate) {
+                    // we don't have a previous coupon date,
+                    // so we fake it
+                    refStartDate = couponDate - 1*Years;
+                } else  {
+                    refStartDate = lastDate;
+                }
+                refEndDate = couponDate;
+            }
+            
+            t += dc.yearFraction(lastDate, couponDate,
+                                 refStartDate, refEndDate);
+            
+            DiscountFactor B = y.discountFactor(t);
+            P += c * B;
+            switch (y.compounding()) {
+              case Simple:
+                d2Pdy2 += c * 2.0*B*B*B*t*t;
+                break;
+              case Compounded:
+                d2Pdy2 += c * B*t*(N*t+1)/(N*(1+r/N)*(1+r/N));
+                break;
+              case Continuous:
+                d2Pdy2 += c * B*t*t;
+                break;
+              case SimpleThenCompounded:
+                if (t<=1.0/N)
+                    d2Pdy2 += c * 2.0*B*B*B*t*t;
+                else
+                    d2Pdy2 += c * B*t*(N*t+1)/(N*(1+r/N)*(1+r/N));
+                break;
+              default:
+                QL_FAIL("unknown compounding convention (" <<
+                        Integer(y.compounding()) << ")");
+            }
+            lastDate = couponDate;
         }
 
         if (P == 0.0)

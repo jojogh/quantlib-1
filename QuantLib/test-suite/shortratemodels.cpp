@@ -105,7 +105,7 @@ void ShortRateModelTest::testCachedHullWhite() {
     #else
     Real cachedA = 0.0464041, cachedSigma = 0.00579912;
     #endif
-    Real tolerance = 1.0e-6;
+    Real tolerance = 1.0e-5;
     Array xMinCalculated = model->params();
     Real yMinCalculated = model->value(xMinCalculated, swaptions);
     Array xMinExpected(2);
@@ -128,8 +128,86 @@ void ShortRateModelTest::testCachedHullWhite() {
     }
 }
 
+void ShortRateModelTest::testCachedHullWhiteFixedReversion() {
+    BOOST_TEST_MESSAGE("Testing Hull-White calibration with fixed reversion against cached values...");
+
+    SavedSettings backup;
+    IndexHistoryCleaner cleaner;
+
+    Date today(15, February, 2002);
+    Date settlement(19, February, 2002);
+    Settings::instance().evaluationDate() = today;
+    Handle<YieldTermStructure> termStructure(flatRate(settlement,0.04875825,
+                                                      Actual365Fixed()));
+    boost::shared_ptr<HullWhite> model(new HullWhite(termStructure,0.05,0.01));
+    CalibrationData data[] = {{ 1, 5, 0.1148 },
+                              { 2, 4, 0.1108 },
+                              { 3, 3, 0.1070 },
+                              { 4, 2, 0.1021 },
+                              { 5, 1, 0.1000 }};
+    boost::shared_ptr<IborIndex> index(new Euribor6M(termStructure));
+
+    boost::shared_ptr<PricingEngine> engine(
+                                         new JamshidianSwaptionEngine(model));
+
+    std::vector<boost::shared_ptr<CalibrationHelper> > swaptions;
+    for (Size i=0; i<LENGTH(data); i++) {
+        boost::shared_ptr<Quote> vol(new SimpleQuote(data[i].volatility));
+        boost::shared_ptr<CalibrationHelper> helper(
+                             new SwaptionHelper(Period(data[i].start, Years),
+                                                Period(data[i].length, Years),
+                                                Handle<Quote>(vol),
+                                                index,
+                                                Period(1, Years), Thirty360(),
+                                                Actual360(), termStructure));
+        helper->setPricingEngine(engine);
+        swaptions.push_back(helper);
+    }
+
+    // Set up the optimization problem
+    //Real simplexLambda = 0.1;
+    //Simplex optimizationMethod(simplexLambda);
+    LevenbergMarquardt optimizationMethod;//(1.0e-18,1.0e-18,1.0e-18);
+    EndCriteria endCriteria(1000,500,1E-8,1E-8,1E-8);
+
+    //Optimize
+    model->calibrate(swaptions, optimizationMethod, endCriteria, Constraint(), std::vector<Real>(),
+        HullWhite::FixedReversion());
+    EndCriteria::Type ecType = model->endCriteria();
+
+    // Check and print out results
+    #if defined(QL_USE_INDEXED_COUPON)
+    Real cachedA = 0.05, cachedSigma = 0.00585835;
+    #else
+    Real cachedA = 0.05, cachedSigma = 0.00585858;
+    #endif
+    Real tolerance = 1.0e-5;
+    Array xMinCalculated = model->params();
+    Real yMinCalculated = model->value(xMinCalculated, swaptions);
+    Array xMinExpected(2);
+    xMinExpected[0]= cachedA;
+    xMinExpected[1]= cachedSigma;
+    Real yMinExpected = model->value(xMinExpected, swaptions);
+    if (std::fabs(xMinCalculated[0]-cachedA) > tolerance
+        || std::fabs(xMinCalculated[1]-cachedSigma) > tolerance) {
+        BOOST_ERROR("Failed to reproduce cached calibration results:\n"
+                    << "calculated: a = " << xMinCalculated[0] << ", "
+                    << "sigma = " << xMinCalculated[1] << ", "
+                    << "f(a) = " << yMinCalculated << ",\n"
+                    << "expected:   a = " << xMinExpected[0] << ", "
+                    << "sigma = " << xMinExpected[1] << ", "
+                    << "f(a) = " << yMinExpected << ",\n"
+                    << "difference: a = " << xMinCalculated[0]-xMinExpected[0] << ", "
+                    << "sigma = " << xMinCalculated[1]-xMinExpected[1] << ", "
+                    << "f(a) = " << yMinCalculated - yMinExpected << ",\n"
+                    << "end criteria = " << ecType );
+    }
+}
+
+
 void ShortRateModelTest::testCachedHullWhite2() {
-    BOOST_TEST_MESSAGE("Testing Hull-White calibration against cached values using swaptions without start delay ...");
+    BOOST_TEST_MESSAGE("Testing Hull-White calibration against cached "
+                       "values using swaptions without start delay...");
 
     SavedSettings backup;
     IndexHistoryCleaner cleaner;
@@ -146,8 +224,9 @@ void ShortRateModelTest::testCachedHullWhite2() {
                               { 4, 2, 0.1021 },
                               { 5, 1, 0.1000 }};
     boost::shared_ptr<IborIndex> index(new Euribor6M(termStructure));
-    boost::shared_ptr<IborIndex> index0(new IborIndex(index->familyName(),index->tenor(),0,index->currency(),index->fixingCalendar(),
-		index->businessDayConvention(),index->endOfMonth(),index->dayCounter(),termStructure)); // Euribor 6m with zero fixing days
+    boost::shared_ptr<IborIndex> index0(new IborIndex(
+        index->familyName(),index->tenor(),0,index->currency(),index->fixingCalendar(),
+        index->businessDayConvention(),index->endOfMonth(),index->dayCounter(),termStructure)); // Euribor 6m with zero fixing days
 
     boost::shared_ptr<PricingEngine> engine(
                                          new JamshidianSwaptionEngine(model));
@@ -177,8 +256,9 @@ void ShortRateModelTest::testCachedHullWhite2() {
     EndCriteria::Type ecType = model->endCriteria();
 
     // Check and print out results
-	// The cached values were produced with an older version of the JamshidianEngine not 
-	// accounting for the delay between option expiry and underlying start
+    // The cached values were produced with an older version of the
+    // JamshidianEngine not accounting for the delay between option
+    // expiry and underlying start
     #if defined(QL_USE_INDEXED_COUPON)
     Real cachedA = 0.0481608, cachedSigma = 0.00582493;
     #else
@@ -350,10 +430,10 @@ void ShortRateModelTest::testFuturesConvexityBias() {
 test_suite* ShortRateModelTest::suite() {
     test_suite* suite = BOOST_TEST_SUITE("Short-rate model tests");
     suite->add(QUANTLIB_TEST_CASE(&ShortRateModelTest::testCachedHullWhite));
+    suite->add(QUANTLIB_TEST_CASE(&ShortRateModelTest::testCachedHullWhiteFixedReversion));
     suite->add(QUANTLIB_TEST_CASE(&ShortRateModelTest::testCachedHullWhite2));
     suite->add(QUANTLIB_TEST_CASE(&ShortRateModelTest::testSwaps));
-    suite->add(QUANTLIB_TEST_CASE(
-                              &ShortRateModelTest::testFuturesConvexityBias));
+    suite->add(QUANTLIB_TEST_CASE(&ShortRateModelTest::testFuturesConvexityBias));
     return suite;
 }
 

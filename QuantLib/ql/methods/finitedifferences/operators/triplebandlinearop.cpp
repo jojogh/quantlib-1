@@ -4,6 +4,7 @@
  Copyright (C) 2008 Andreas Gaida
  Copyright (C) 2008 Ralph Schreyer
  Copyright (C) 2008 Klaus Spanderen
+ Copyright (C) 2014 Johannes Göttker-Schnetmann
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -123,6 +124,7 @@ namespace QuantLib {
 
         if (a.empty()) {
             if (b.empty()) {
+                //#pragma omp parallel for
                 for (Size i=0; i < size; ++i) {
                     diag[i]  = y_diag[i];
                     lower[i] = y_lower[i];
@@ -132,7 +134,7 @@ namespace QuantLib {
             else {
                 Array::const_iterator bptr(b.begin());
                 const Size binc = (b.size() > 1) ? 1 : 0;
-
+                //#pragma omp parallel for
                 for (Size i=0; i < size; ++i) {
                     diag[i]  = y_diag[i] + bptr[i*binc];
                     lower[i] = y_lower[i];
@@ -148,6 +150,7 @@ namespace QuantLib {
             const Real *x_lower(x.lower_.get());
             const Real *x_upper(x.upper_.get());
 
+            //#pragma omp parallel for
             for (Size i=0; i < size; ++i) {
                 const Real s = aptr[i*ainc];
                 diag[i]  = y_diag[i]  + s*x_diag[i];
@@ -166,6 +169,7 @@ namespace QuantLib {
             const Real *x_lower(x.lower_.get());
             const Real *x_upper(x.upper_.get());
 
+            //#pragma omp parallel for
             for (Size i=0; i < size; ++i) {
                 const Real s = aptr[i*ainc];
                 diag[i]  = y_diag[i]  + s*x_diag[i] + bptr[i*binc];
@@ -180,6 +184,7 @@ namespace QuantLib {
 
         TripleBandLinearOp retVal(direction_, mesher_);
         const Size size = mesher_->layout()->size();
+        //#pragma omp parallel for
         for (Size i=0; i < size; ++i) {
             retVal.lower_[i]= lower_[i] + m.lower_[i];
             retVal.diag_[i] = diag_[i]  + m.diag_[i];
@@ -195,6 +200,7 @@ namespace QuantLib {
         TripleBandLinearOp retVal(direction_, mesher_);
 
         const Size size = mesher_->layout()->size();
+        //#pragma omp parallel for
         for (Size i=0; i < size; ++i) {
             const Real s = u[i];
             retVal.lower_[i]= lower_[i]*s;
@@ -205,11 +211,31 @@ namespace QuantLib {
         return retVal;
     }
 
+    Disposable<TripleBandLinearOp> TripleBandLinearOp::multR(const Array& u) const {
+        const boost::shared_ptr<FdmLinearOpLayout> layout = mesher_->layout();
+        const Size size = layout->size();
+        QL_REQUIRE(u.size() == size, "inconsistent size of rhs");
+        TripleBandLinearOp retVal(direction_, mesher_);
+
+        #pragma omp parallel for
+        for (Size i=0; i < size; ++i) {
+            const Real sm1 = i > 0? u[i-1] : 1.0;
+            const Real s0 = u[i];
+            const Real sp1 = i < size-1? u[i+1] : 1.0;
+            retVal.lower_[i]= lower_[i]*sm1;
+            retVal.diag_[i] = diag_[i]*s0;
+            retVal.upper_[i]= upper_[i]*sp1;
+        }
+
+        return retVal;
+    }
+
     Disposable<TripleBandLinearOp> TripleBandLinearOp::add(const Array& u) const {
 
         TripleBandLinearOp retVal(direction_, mesher_);
 
         const Size size = mesher_->layout()->size();
+        //#pragma omp parallel for
         for (Size i=0; i < size; ++i) {
             retVal.lower_[i]= lower_[i];
             retVal.upper_[i]= upper_[i];
@@ -231,6 +257,7 @@ namespace QuantLib {
         const Size* i2ptr = i2_.get();
 
         array_type retVal(r.size());
+        //#pragma omp parallel for
         for (Size i=0; i < index->size(); ++i) {
             retVal[i] = r[i0ptr[i]]*lptr[i]+r[i]*dptr[i]+r[i2ptr[i]]*uptr[i];
         }

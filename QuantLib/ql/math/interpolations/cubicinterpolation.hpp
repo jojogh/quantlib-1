@@ -97,6 +97,7 @@ namespace QuantLib {
 
         \test to be adapted from old ones.
 
+        \ingroup interpolations
     */
     class CubicInterpolation : public Interpolation {
       public:
@@ -303,6 +304,7 @@ namespace QuantLib {
     };
 
     //! %Cubic interpolation factory and traits
+    /*! \ingroup interpolations */
     class Cubic {
       public:
         Cubic(CubicInterpolation::DerivativeApprox da
@@ -352,7 +354,8 @@ namespace QuantLib {
                                    CubicInterpolation::BoundaryCondition rightCondition,
                                    Real rightConditionValue)
             : CoefficientHolder(xEnd-xBegin),
-              Interpolation::templateImpl<I1,I2>(xBegin, xEnd, yBegin),
+              Interpolation::templateImpl<I1,I2>(xBegin, xEnd, yBegin,
+                                                 Cubic::requiredPoints),
               da_(da),
               monotonic_(monotonic),
               leftType_(leftCondition), rightType_(rightCondition),
@@ -721,7 +724,7 @@ namespace QuantLib {
             mutable std::vector<Real> dx_, S_;
             mutable TridiagonalOperator L_;
 
-			inline Real cubicInterpolatingPolynomialDerivative(
+            inline Real cubicInterpolatingPolynomialDerivative(
                                Real a, Real b, Real c, Real d,
                                Real u, Real v, Real w, Real z, Real x) const {
                 return (-((((a-c)*(b-c)*(c-x)*z-(a-d)*(b-d)*(d-x)*w)*(a-x+b-x)

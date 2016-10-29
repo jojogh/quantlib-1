@@ -10,9 +10,11 @@ include_HEADERS = \
     vo_all.hpp \
     vo_alphaform.hpp \
     vo_assetswap.hpp \
+    vo_basketlossmodels.hpp \
     vo_bonds.hpp \
     vo_browniangenerators.hpp \
     vo_btp.hpp \
+    vo_calibrationhelpers.hpp \
     vo_capfloor.hpp \
     vo_capletvolstructure.hpp \
     vo_cmsmarketcalibration.hpp \
@@ -22,6 +24,7 @@ include_HEADERS = \
     vo_credit.hpp \
     vo_ctsmmcapletcalibration.hpp \
     vo_curvestate.hpp \
+    vo_defaultbasket.hpp \
     vo_defaulttermstructures.hpp \
     vo_driftcalculators.hpp \
     vo_evolutiondescription.hpp \
@@ -30,6 +33,7 @@ include_HEADERS = \
     vo_group.hpp \
     vo_index.hpp \
     vo_interpolation.hpp \
+    vo_latentmodels.hpp \
     vo_leg.hpp \
     vo_marketmodelevolvers.hpp \
     vo_marketmodels.hpp \
@@ -66,9 +70,11 @@ libValueObjects_la_SOURCES = \
     vo_accountingengines.cpp \
     vo_alphaform.cpp \
     vo_assetswap.cpp \
+    vo_basketlossmodels.cpp \
     vo_bonds.cpp \
     vo_browniangenerators.cpp \
     vo_btp.cpp \
+    vo_calibrationhelpers.cpp \
     vo_capfloor.cpp \
     vo_capletvolstructure.cpp \
     vo_cmsmarketcalibration.cpp \
@@ -78,6 +84,7 @@ libValueObjects_la_SOURCES = \
     vo_credit.cpp \
     vo_ctsmmcapletcalibration.cpp \
     vo_curvestate.cpp \
+    vo_defaultbasket.cpp \
     vo_defaulttermstructures.cpp \
     vo_driftcalculators.cpp \
     vo_evolutiondescription.cpp \
@@ -85,6 +92,7 @@ libValueObjects_la_SOURCES = \
     vo_forwardrateagreement.cpp \
     vo_index.cpp \
     vo_interpolation.cpp \
+    vo_latentmodels.cpp \
     vo_leg.cpp \
     vo_marketmodelevolvers.cpp \
     vo_marketmodels.cpp \

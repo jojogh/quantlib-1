@@ -79,16 +79,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib Ws2_32.lib advapi32.lib"
-				OutputFile="..\xll\QuantLibXL-vc90-mt-sgd-1_1_0.xll"
-				LinkIncremental="2"
+				OutputFile="..\xll\QuantLibXL-vc90-mt-sgd-1_8_0.xll"
+				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../ObjectHandler/lib,../../QuantLib/lib,../../QuantLibAddin/lib,../../log4cxx/msvc/lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-sgd-1_1_0.pdb"
+				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-sgd-1_8_0.pdb"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-sgd-1_1_0.lib"
+				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-sgd-1_8_0.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -179,16 +179,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib Ws2_32.lib advapi32.lib"
-				OutputFile="..\xll\QuantLibXL-vc90-mt-gd-1_1_0.xll"
+				OutputFile="..\xll\QuantLibXL-vc90-mt-gd-1_8_0.xll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../ObjectHandler/lib,../../QuantLib/lib,../../QuantLibAddin/lib,../../log4cxx/msvc/lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-gd-1_1_0.pdb"
+				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-gd-1_8_0.pdb"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-gd-1_1_0.lib"
+				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-gd-1_8_0.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -281,17 +281,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib Ws2_32.lib advapi32.lib"
-				OutputFile="..\xll\QuantLibXL-vc90-mt-s-1_1_0.xll"
+				OutputFile="..\xll\QuantLibXL-vc90-mt-s-1_8_0.xll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../ObjectHandler/lib,../../QuantLib/lib,../../QuantLibAddin/lib,../../log4cxx/msvc/lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-s-1_1_0.pdb"
+				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-s-1_8_0.pdb"
 				OptimizeReferences="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-s-1_1_0.lib"
+				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-s-1_8_0.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -384,17 +384,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib Ws2_32.lib advapi32.lib"
-				OutputFile="..\xll\QuantLibXL-vc90-mt-1_1_0.xll"
+				OutputFile="..\xll\QuantLibXL-vc90-mt-1_8_0.xll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../ObjectHandler/lib,../../QuantLib/lib,../../QuantLibAddin/lib,../../log4cxx/msvc/lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-1_1_0.pdb"
+				ProgramDatabaseFile="..\xll\QuantLibXL-vc90-mt-1_8_0.pdb"
 				OptimizeReferences="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-1_1_0.lib"
+				ImportLibrary=".\buildStatic\vc90\$(ConfigurationName)/QuantLibAddinStatic-vc90-mt-1_8_0.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -457,6 +457,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\register\register_basketlossmodels.cpp"
+				>
+			</File>
+			<File
 				RelativePath="register\register_bonds.cpp"
 				>
 			</File>
@@ -470,6 +474,10 @@
 			</File>
 			<File
 				RelativePath="register\register_calendar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\register\register_calibrationhelpers.cpp"
 				>
 			</File>
 			<File
@@ -517,6 +525,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\register\register_defaultbasket.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\register\register_defaulttermstructures.cpp"
 				>
 			</File>
@@ -550,6 +562,10 @@
 			</File>
 			<File
 				RelativePath="register\register_interpolation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\register\register_latentmodels.cpp"
 				>
 			</File>
 			<File
@@ -701,6 +717,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\functions\basketlossmodels.cpp"
+				>
+			</File>
+			<File
 				RelativePath="functions\bonds.cpp"
 				>
 			</File>
@@ -714,6 +734,10 @@
 			</File>
 			<File
 				RelativePath="functions\calendar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\functions\calibrationhelpers.cpp"
 				>
 			</File>
 			<File
@@ -741,6 +765,10 @@
 				>
 			</File>
 			<File
+				RelativePath="functions\credit.cpp"
+				>
+			</File>
+			<File
 				RelativePath="functions\ctsmmcapletcalibration.cpp"
 				>
 			</File>
@@ -754,6 +782,10 @@
 			</File>
 			<File
 				RelativePath="functions\daycounter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\functions\defaultbasket.cpp"
 				>
 			</File>
 			<File
@@ -794,6 +826,10 @@
 			</File>
 			<File
 				RelativePath="functions\interpolation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\functions\latentmodels.cpp"
 				>
 			</File>
 			<File

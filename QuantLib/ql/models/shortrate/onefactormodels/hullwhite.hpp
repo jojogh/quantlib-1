@@ -60,10 +60,10 @@ namespace QuantLib {
                                 Time bondMaturity) const;
 
        Real discountBondOption(Option::Type type,
-                                Real strike,
-                                Time maturity,
-								Time bondStart,
-                                Time bondMaturity) const;
+                               Real strike,
+                               Time maturity,
+                               Time bondStart,
+                               Time bondMaturity) const;
 
         /*! Futures convexity bias (i.e., the difference between
             futures implied rate and forward rate) calculated as in
@@ -78,6 +78,13 @@ namespace QuantLib {
                                   Time T,
                                   Real sigma,
                                   Real a);
+
+        static std::vector<bool> FixedReversion() {
+            std::vector<bool> c(2);
+            c[0] = true; c[1] = false;
+            return c;
+        }
+
       protected:
         void generateArguments();
 

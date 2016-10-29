@@ -27,10 +27,10 @@
 #ifndef ql_calc_utilities_hpp
 #define ql_calc_utilities_hpp
 
-    STRING SAL_CALL qlAddinVersion(
+    SEQSEQ(ANY) SAL_CALL qlAddinVersion(
         const ANY &Trigger) throw(RuntimeException);
 
-    STRING SAL_CALL qlVersion(
+    SEQSEQ(ANY) SAL_CALL qlVersion(
         const ANY &Trigger) throw(RuntimeException);
 
 

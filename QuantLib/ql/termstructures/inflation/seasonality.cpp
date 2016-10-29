@@ -3,6 +3,7 @@
 /*
  Copyright (C) 2008 Piero Del Boca
  Copyright (C) 2009 Chris Kenyon
+ Copyright (C) 2015 Bernd Lewerenz
 
 This file is part of QuantLib, a free-software/open-source library
 for financial quantitative analysts and developers - http://quantlib.org/
@@ -79,7 +80,7 @@ namespace QuantLib {
         Real eps = 0.00001;
         for (Size i = 1; i < nTest; i++) {
             Real factorAt = this->seasonalityFactor(curveBaseDate+Period(i,Years));
-            QL_REQUIRE(fabs(factorAt-factorBase)<eps,"seasonality is inconsistent with inflation term structure, factors "
+            QL_REQUIRE(std::fabs(factorAt-factorBase)<eps,"seasonality is inconsistent with inflation term structure, factors "
                        << factorBase << " and later factor " << factorAt << ", " << i << " years later from inflation curve "
                        <<" with base date at " << curveBaseDate);
         }
@@ -200,7 +201,7 @@ namespace QuantLib {
             Rate factorBase = this->seasonalityFactor(curveBaseDate);
             Real seasonalityAt = factorAt / factorBase;
             Time timeFromCurveBase = dc.yearFraction(curveBaseDate, atDate);
-            f = pow(seasonalityAt, 1/timeFromCurveBase);
+            f = std::pow(seasonalityAt, 1/timeFromCurveBase);
         }
         else {
             Rate factor1Ybefore = this->seasonalityFactor(atDate - Period(1,Years));
@@ -210,10 +211,64 @@ namespace QuantLib {
         return (rate + 1)*f - 1;
     }
 
+
+    Real KerkhofSeasonality::seasonalityFactor(const Date &to) const {
+
+        Integer dir = 1;
+        Date from = seasonalityBaseDate();
+        Size fromMonth = from.month();
+        Size toMonth = to.month();
+
+        Period factorPeriod(frequency());
+
+        if (toMonth < fromMonth)
+        {
+            Size dummy = fromMonth;
+            fromMonth = toMonth;
+            toMonth = dummy;
+            dir = 0; // We calculate invers Factor in loop
+        }
+
+        QL_REQUIRE(seasonalityFactors().size() == 12 &&
+                   factorPeriod.units() == Months,
+                   "12 monthly seasonal factors needed for Kerkhof Seasonality:"
+                   << " got " << seasonalityFactors().size());
+
+        Real seasonalCorrection = 1.0;
+        for (Size i = fromMonth ; i<toMonth; i++)
+        {
+            seasonalCorrection *= seasonalityFactors()[i];
+
+        }
+
+        if (!dir) // invers Factor required
+        {
+            seasonalCorrection = 1/seasonalCorrection;
+        }
+
+        return seasonalCorrection;
+    }
+
+    Rate KerkhofSeasonality::seasonalityCorrection(Rate rate,
+                                                   const Date& atDate,
+                                                   const DayCounter& dc,
+                                                   const Date& curveBaseDate,
+                                                   const bool isZeroRate) const {
+
+        Real indexFactor = this->seasonalityFactor(atDate);
+
+        // Getting seasonality correction
+        Rate f;
+        if (isZeroRate) {
+            std::pair<Date,Date> lim = inflationPeriod(curveBaseDate, Monthly);
+            Time timeFromCurveBase = dc.yearFraction(lim.first, atDate);
+            f = std::pow(indexFactor, 1/timeFromCurveBase);
+        }
+        else {
+            QL_FAIL("Seasonal Kerkhof model is not defined on YoY rates");
+        }
+
+        return (rate + 1)*f - 1;
+    }
+
 }
-
-
-
-
-
-

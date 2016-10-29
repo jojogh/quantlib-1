@@ -27,6 +27,14 @@
 #include <ql/math/interpolations/backwardflatinterpolation.hpp>
 #include <ql/math/interpolations/forwardflatinterpolation.hpp>
 
+// fix for gcc
+#ifdef __GNUC__
+namespace QuantLib {
+    const Size QuantLib::Cubic::requiredPoints;
+    const Size QuantLib::Linear::requiredPoints;
+};
+#endif
+
 using std::pair;
 using std::vector;
 
@@ -50,7 +58,7 @@ namespace QuantLibAddin {
           public:
             bool operator()(const pair<Real, Handle<Quote> >& h1,
                             const pair<Real, Handle<Quote> >& h2) const {
-                if (h1.first > h2.first)
+                if (h1.first >= h2.first)
                     return false;
                 return true;
             }
@@ -74,7 +82,7 @@ namespace QuantLibAddin {
 
         vector<pair<Real, Handle<Quote> > > pairs(n);
         for (Size i=0; i<n; ++i)
-            pairs[i] = std::make_pair<Real, Handle<Quote> >(x[i], yh[i]);
+            pairs[i] = std::make_pair(x[i], yh[i]);
         std::sort(pairs.begin(), pairs.end(), QuoteHandleSorter());
 
         vector<pair<Real, Handle<Quote> > >::iterator j=pairs.begin();
@@ -132,6 +140,12 @@ namespace QuantLibAddin {
         bool permanent)
     : Interpolation(properties, x, yh, permanent)
     {
+        // This constructor does not compile under gcc because of problems with
+        // static const template arguments.
+#ifdef __GNUC__
+        QL_FAIL("class QuantLibAddin::MixedLinearCubicInterpolation is not "
+            "supported under gcc");
+#else
         libraryObject_ = shared_ptr<QuantLib::Extrapolator>(new
             QuantLib::MixedLinearCubicInterpolation(
                                                 x_.begin(), x_.end(),
@@ -143,6 +157,7 @@ namespace QuantLibAddin {
             dynamic_pointer_cast<QuantLib::Interpolation>(libraryObject_);
         qlMixedLinearCubicInterpolation_ =
             dynamic_pointer_cast<QuantLib::MixedLinearCubicInterpolation>(libraryObject_);
+#endif
     }
 
     CubicInterpolation::CubicInterpolation(

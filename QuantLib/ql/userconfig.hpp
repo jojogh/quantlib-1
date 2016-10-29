@@ -58,11 +58,6 @@
 //#   define QL_EXTRA_SAFETY_CHECKS
 #endif
 
-/* Define this if you want to disable deprecated code. */
-#ifndef QL_DISABLE_DEPRECATED
-//#   define QL_DISABLE_DEPRECATED
-#endif
-
 /* Define this to use indexed coupons instead of par coupons in floating
    legs. */
 #ifndef QL_USE_INDEXED_COUPON
@@ -75,6 +70,25 @@
    different session id for each session.*/
 #ifndef QL_ENABLE_SESSIONS
 //#   define QL_ENABLE_SESSIONS
+#endif
+
+/* Define this to enable the thread-safe observer pattern. You should
+   enable it if you want to use QuantLib via the SWIG layer within
+   the JVM or .NET eco system or any environment with an
+   async garbage collector */
+#ifndef QL_ENABLE_THREAD_SAFE_OBSERVER_PATTERN
+//#    define QL_ENABLE_THREAD_SAFE_OBSERVER_PATTERN
+#endif
+
+/* Define this to enable a date resolution down to microseconds and
+   allow for accurate intraday pricing.*/
+#ifndef QL_HIGH_RESOLUTION_DATE
+//#    define QL_HIGH_RESOLUTION_DATE
+#endif
+
+/* Define this to enable the parallel unit test runner */
+#ifndef QL_ENABLE_PARALLEL_UNIT_TEST_RUNNER
+//#    define QL_ENABLE_PARALLEL_UNIT_TEST_RUNNER
 #endif
 
 #endif

@@ -3,6 +3,7 @@
 /*
  Copyright (C) 2000, 2001, 2002, 2003 RiskMap srl
  Copyright (C) 2003, 2004, 2005, 2006, 2007 StatPro Italia srl
+ Copyright (C) 2015 CompatibL
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -36,19 +37,42 @@
 
 #include <boost/config.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION < 103100
+#if BOOST_VERSION < 103900
     #error using an old version of Boost, please update.
 #endif
 #if !defined(BOOST_ENABLE_ASSERT_HANDLER)
     #define BOOST_ENABLE_ASSERT_HANDLER
 #endif
 
-/* eventually these will go into userconfig.hpp.
-   For the time being, we hard code them here.
+/* This allows one to include a given file at this point by
+   passing it as a compiler define (e.g., -DQL_INCLUDE_FIRST=foo.hpp).
+
+   The idea is to provide a hook for defining QL_REAL and at the
+   same time including any necessary headers for the new type.
 */
-#define QL_INTEGER int
-#define QL_BIG_INTEGER long
-#define QL_REAL double
+#define INCLUDE_FILE(F) INCLUDE_FILE__(F)
+#define INCLUDE_FILE_(F) #F
+#ifdef QL_INCLUDE_FIRST
+#    include INCLUDE_FILE(QL_INCLUDE_FIRST)
+#endif
+#undef INCLUDE_FILE_
+#undef INCLUDE_FILE
+
+/* Eventually these might go into userconfig.hpp.
+   For the time being, we hard code them here.
+   They can be overridden by passing the #define to the compiler.
+*/
+#ifndef QL_INTEGER
+#    define QL_INTEGER int
+#endif
+
+#ifndef QL_BIG_INTEGER
+#    define QL_BIG_INTEGER long
+#endif
+
+#ifndef QL_REAL
+#   define QL_REAL double
+#endif
 
 
 /*! \defgroup macros QuantLib macros
@@ -86,6 +110,17 @@
     #endif
 #endif
 
+#ifdef QL_ENABLE_THREAD_SAFE_OBSERVER_PATTERN
+    #if BOOST_VERSION < 105800
+        #error Boost version 1.58 or higher is required for the thread-safe observer pattern
+    #endif
+#endif
+
+#ifdef QL_ENABLE_PARALLEL_UNIT_TEST_RUNNER
+    #if BOOST_VERSION < 105900
+        #error Boost version 1.59 or higher is required for the parallel unit test runner
+    #endif
+#endif
 
 // ensure that needed math constants are defined
 #include <ql/mathconstants.hpp>
@@ -146,7 +181,18 @@
 #define QL_NULL_REAL           ((std::numeric_limits<float>::max)())
 /*! @} */
 
-
 /*! @}  */
+
+
+// emit warning when using deprecated features
+#if defined(BOOST_MSVC)       // Microsoft Visual C++
+#define QL_DEPRECATED __declspec(deprecated)
+#elif defined(__GNUC__) || defined(__clang__)
+#define QL_DEPRECATED __attribute__((deprecated))
+#else
+// we don't know how to enable it, just define the macro away
+#define QL_DEPRECATED
+#endif
+
 
 #endif

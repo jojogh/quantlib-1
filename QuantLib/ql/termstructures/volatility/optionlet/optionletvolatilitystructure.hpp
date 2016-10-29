@@ -3,6 +3,8 @@
 /*
  Copyright (C) 2002, 2003 RiskMap srl
  Copyright (C) 2003, 2004, 2005, 2006 StatPro Italia srl
+ Copyright (C) 2015 Peter Caspers
+ Copyright (C) 2015 Michael von den Driesch
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -26,6 +28,8 @@
 #define quantlib_optionlet_volatility_structure_hpp
 
 #include <ql/termstructures/voltermstructure.hpp>
+#include <ql/termstructures/volatility/optionlet/optionletstripper.hpp>
+#include <ql/termstructures/volatility/volatilitytype.hpp>
 
 namespace QuantLib {
 
@@ -42,15 +46,6 @@ namespace QuantLib {
             constructors.
         */
         //@{
-#ifndef QL_DISABLE_DEPRECATED
-        /*! \warning term structures initialized by means of this
-                     constructor must manage their own reference date
-                     by overriding the referenceDate() method.
-        */
-        OptionletVolatilityStructure(const Calendar& cal,
-                                     BusinessDayConvention bdc = Following,
-                                     const DayCounter& dc = DayCounter());
-#endif
         //! default constructor
         /*! \warning term structures initialized by means of this
                      constructor must manage their own reference date
@@ -108,14 +103,17 @@ namespace QuantLib {
         boost::shared_ptr<SmileSection> smileSection(Time optionTime,
                                                      bool extr = false) const;
         //@}
+        virtual VolatilityType volatilityType() const;
+        virtual Real displacement() const;
+
       protected:
         virtual boost::shared_ptr<SmileSection> smileSectionImpl(
                                                 const Date& optionDate) const;
         //! implements the actual smile calculation in derived classes
         virtual boost::shared_ptr<SmileSection> smileSectionImpl(
                                                     Time optionTime) const = 0;
-        Volatility volatilityImpl(const Date& optionDate,
-                                  Rate strike) const;
+        virtual Volatility volatilityImpl(const Date& optionDate,
+                                          Rate strike) const;
         //! implements the actual volatility calculation in derived classes
         virtual Volatility volatilityImpl(Time optionTime,
                                           Rate strike) const = 0;
@@ -212,6 +210,14 @@ namespace QuantLib {
         return volatilityImpl(timeFromReference(optionDate), strike);
     }
 
+    inline VolatilityType
+    OptionletVolatilityStructure::volatilityType() const {
+        return ShiftedLognormal;
+    }
+
+    inline Real OptionletVolatilityStructure::displacement() const {
+        return 0.0;
+    }
 }
 
 #endif

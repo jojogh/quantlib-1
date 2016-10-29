@@ -63,6 +63,9 @@ namespace QuantLib {
         Real evolve(Time t0, Real x0, Time dt, Real dw, const Array& du) const;
         
     private:
+        // avoid clang++ warnings
+        using StochasticProcess::evolve;
+
         const Real x0_;
         const Real alpha_, beta_, gamma_, delta_;
         const Real eps_, zeta_, d_; 

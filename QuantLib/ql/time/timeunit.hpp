@@ -28,7 +28,7 @@
 #define quantlib_timeunit_hpp
 
 #include <ql/qldefines.hpp>
-#include <ostream>
+#include <iosfwd>
 
 namespace QuantLib {
 
@@ -37,7 +37,12 @@ namespace QuantLib {
     enum TimeUnit { Days,
                     Weeks,
                     Months,
-                    Years
+                    Years,
+                    Hours,
+                    Minutes,
+                    Seconds,
+                    Milliseconds,
+					Microseconds
     };
 
     /*! \relates TimeUnit */

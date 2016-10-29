@@ -2,7 +2,8 @@
 
 /*
  Copyright (C) 2005, 2006, 2007, 2008, 2009 StatPro Italia srl
- Copyright (C) 2009 Ferdinando Ametrano
+ Copyright (C) 2009, 2015 Ferdinando Ametrano
+ Copyright (C) 2015 Paolo Mazzocchi
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -111,6 +112,8 @@ namespace QuantLib {
 
     template <class T>
     inline Date InterpolatedForwardCurve<T>::maxDate() const {
+        if (this->maxDate_ != Date())
+           return this->maxDate_;
         return dates_.back();
     }
 
@@ -215,7 +218,7 @@ namespace QuantLib {
                                     const std::vector<Handle<Quote> >& jumps,
                                     const std::vector<Date>& jumpDates,
                                     const T& interpolator)
-    : ForwardRateStructure(dates.front(), calendar, dayCounter, jumps, jumpDates),
+    : ForwardRateStructure(dates.at(0), calendar, dayCounter, jumps, jumpDates),
       InterpolatedCurve<T>(std::vector<Time>(), forwards, interpolator),
       dates_(dates)
     {
@@ -229,7 +232,7 @@ namespace QuantLib {
             const DayCounter& dayCounter,
             const Calendar& calendar,
             const T& interpolator)
-    : ForwardRateStructure(dates.front(), calendar, dayCounter),
+    : ForwardRateStructure(dates.at(0), calendar, dayCounter),
       InterpolatedCurve<T>(std::vector<Time>(), forwards, interpolator),
       dates_(dates)
     {
@@ -242,7 +245,7 @@ namespace QuantLib {
             const std::vector<Rate>& forwards,
             const DayCounter& dayCounter,
             const T& interpolator)
-    : ForwardRateStructure(dates.front(), Calendar(), dayCounter),
+    : ForwardRateStructure(dates.at(0), Calendar(), dayCounter),
       InterpolatedCurve<T>(std::vector<Time>(), forwards, interpolator),
       dates_(dates)
     {

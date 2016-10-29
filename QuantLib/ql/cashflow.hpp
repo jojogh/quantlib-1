@@ -26,7 +26,6 @@
 #define quantlib_cash_flow_hpp
 
 #include <ql/event.hpp>
-#include <ql/settings.hpp>
 #include <ql/math/comparison.hpp>
 #include <vector>
 
@@ -44,8 +43,8 @@ namespace QuantLib {
         //! \note This is inherited from the event class
         virtual Date date() const = 0;
         //! returns true if an event has already occurred before a date
-        /*! overloads Event::hasOccurred in order to take QL_TODAYS_PAYMENTS
-            in account
+        /*! overloads Event::hasOccurred in order to take
+            Settings::includeTodaysCashflows in account
         */
         bool hasOccurred(
                     const Date& refDate = Date(),
@@ -58,6 +57,11 @@ namespace QuantLib {
                   amount paid at the cash flow date.
         */
         virtual Real amount() const = 0;
+        //! returns the date that the cash flow trades exCoupon
+        virtual Date exCouponDate() const {return Date();};
+        //! returns true if the cashflow is trading ex-coupon on the refDate
+        bool tradingExCoupon(const Date& refDate = Date()) const;
+
         //@}
         //! \name Visitability
         //@{

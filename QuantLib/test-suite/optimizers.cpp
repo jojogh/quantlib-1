@@ -23,6 +23,7 @@
 
 #include "optimizers.hpp"
 #include "utilities.hpp"
+#include <boost/make_shared.hpp>
 #include <ql/math/optimization/simplex.hpp>
 #include <ql/math/optimization/levenbergmarquardt.hpp>
 #include <ql/math/optimization/conjugategradient.hpp>
@@ -32,9 +33,13 @@
 #include <ql/math/optimization/costfunction.hpp>
 #include <ql/math/randomnumbers/mt19937uniformrng.hpp>
 #include <ql/math/optimization/differentialevolution.hpp>
+#include <ql/math/optimization/goldstein.hpp>
 
 using namespace QuantLib;
 using namespace boost::unit_test_framework;
+
+using std::pow;
+using std::cos;
 
 namespace {
 
@@ -53,7 +58,7 @@ namespace {
       public:
         OneDimensionalPolynomialDegreeN(const Array& coefficients)
         : coefficients_(coefficients),
-          polynomialDegree_(coefficients.size()-1),odd(true) {}
+          polynomialDegree_(coefficients.size()-1) {}
 
         Real value(const Array& x) const {
             QL_REQUIRE(x.size()==1,"independent variable must be 1 dimensional");
@@ -73,7 +78,6 @@ namespace {
       private:
         const Array coefficients_;
         const Size polynomialDegree_;
-        mutable bool odd;
     };
 
 
@@ -106,9 +110,13 @@ namespace {
 
     enum OptimizationMethodType {simplex,
                                  levenbergMarquardt,
+                                 levenbergMarquardt2,
                                  conjugateGradient,
+                                 conjugateGradient_goldstein,
                                  steepestDescent,
-                                 bfgs};
+                                 steepestDescent_goldstein,
+                                 bfgs,
+                                 bfgs_goldstein};
 
     std::string optimizationMethodTypeToString(OptimizationMethodType type) {
         switch (type) {
@@ -116,12 +124,20 @@ namespace {
             return "Simplex";
           case levenbergMarquardt:
             return "Levenberg Marquardt";
+          case levenbergMarquardt2:
+            return "Levenberg Marquardt (cost function's jacbobian)";
           case conjugateGradient:
             return "Conjugate Gradient";
           case steepestDescent:
             return "Steepest Descent";
           case bfgs:
             return "BFGS";
+          case conjugateGradient_goldstein:
+              return "Conjugate Gradient (Goldstein line search)";
+          case steepestDescent_goldstein:
+              return "Steepest Descent (Goldstein line search)";
+          case bfgs_goldstein:
+              return "BFGS (Goldstein line search)";
           default:
             QL_FAIL("unknown OptimizationMethod type");
         }
@@ -148,12 +164,24 @@ namespace {
                 new LevenbergMarquardt(levenbergMarquardtEpsfcn,
                                        levenbergMarquardtXtol,
                                        levenbergMarquardtGtol));
+          case levenbergMarquardt2:
+            return boost::shared_ptr<OptimizationMethod>(
+                new LevenbergMarquardt(levenbergMarquardtEpsfcn,
+                                       levenbergMarquardtXtol,
+                                       levenbergMarquardtGtol,
+                                       true));
           case conjugateGradient:
             return boost::shared_ptr<OptimizationMethod>(new ConjugateGradient);
           case steepestDescent:
             return boost::shared_ptr<OptimizationMethod>(new SteepestDescent);
           case bfgs:
             return boost::shared_ptr<OptimizationMethod>(new BFGS);
+          case conjugateGradient_goldstein:
+              return boost::shared_ptr<OptimizationMethod>(new ConjugateGradient(boost::make_shared<GoldsteinLineSearch>()));
+          case steepestDescent_goldstein:
+              return boost::shared_ptr<OptimizationMethod>(new SteepestDescent(boost::make_shared<GoldsteinLineSearch>()));
+          case bfgs_goldstein:
+              return boost::shared_ptr<OptimizationMethod>(new BFGS(boost::make_shared<GoldsteinLineSearch>()));
           default:
             QL_FAIL("unknown OptimizationMethod type");
         }
@@ -223,7 +251,8 @@ namespace {
                             gradientNormEpsilons_.back())));
         // Set optimization methods for optimizer
         OptimizationMethodType optimizationMethodTypes[] = {
-            simplex, levenbergMarquardt, conjugateGradient, bfgs//, steepestDescent
+            simplex, levenbergMarquardt, levenbergMarquardt2, conjugateGradient,
+            bfgs //, steepestDescent
         };
         Real simplexLambda = 0.1;                   // characteristic search length for simplex
         Real levenbergMarquardtEpsfcn = 1.0e-8;     // parameters specific for Levenberg-Marquardt
@@ -281,6 +310,7 @@ void OptimizersTest::test() {
                   case EndCriteria::MaxIterations:
                   case EndCriteria::Unknown:
                     completed = false;
+                    break;
                   default:
                     completed = true;
                 }
@@ -375,7 +405,7 @@ namespace {
         Real value(const Array& x) const {
             Real fx = 0.0;
             for (Size i=0; i<x.size(); ++i) {
-                fx += floor(x[i])*floor(x[i]);
+                fx += std::floor(x[i])*std::floor(x[i]);
             }
             return fx;
         }
@@ -470,7 +500,7 @@ void OptimizersTest::testDifferentialEvolution() {
     costFunctions.push_back(boost::shared_ptr<CostFunction>(new SecondDeJong));
     costFunctions.push_back(boost::shared_ptr<CostFunction>(new ModThirdDeJong));
     costFunctions.push_back(boost::shared_ptr<CostFunction>(new ModFourthDeJong));
-  	costFunctions.push_back(boost::shared_ptr<CostFunction>(new Griewangk));
+    costFunctions.push_back(boost::shared_ptr<CostFunction>(new Griewangk));
 
     std::vector<BoundaryConstraint> constraints;
     constraints.push_back(BoundaryConstraint(-10.0, 10.0));
@@ -484,21 +514,21 @@ void OptimizersTest::testDifferentialEvolution() {
     initialValues.push_back(Array(2, 5.0));
     initialValues.push_back(Array(5, 5.0));
     initialValues.push_back(Array(30, 5.0));
-  	initialValues.push_back(Array(10, 100.0));
+    initialValues.push_back(Array(10, 100.0));
 
     std::vector<EndCriteria> endCriteria;
     endCriteria.push_back(EndCriteria(100, 10, 1e-10, 1e-8, Null<Real>()));
     endCriteria.push_back(EndCriteria(100, 10, 1e-10, 1e-8, Null<Real>()));
     endCriteria.push_back(EndCriteria(100, 10, 1e-10, 1e-8, Null<Real>()));
     endCriteria.push_back(EndCriteria(500, 100, 1e-10, 1e-8, Null<Real>()));
-  	endCriteria.push_back(EndCriteria(1000, 800, 1e-12, 1e-10, Null<Real>()));
+    endCriteria.push_back(EndCriteria(1000, 800, 1e-12, 1e-10, Null<Real>()));
 
     std::vector<Real> minima;
     minima.push_back(0.0);
     minima.push_back(0.0);
     minima.push_back(0.0);
     minima.push_back(10.9639796558);
-  	minima.push_back(0.0);
+    minima.push_back(0.0);
 
     for (Size i = 0; i < costFunctions.size(); ++i) {
         Problem problem(*costFunctions[i], constraints[i], initialValues[i]);

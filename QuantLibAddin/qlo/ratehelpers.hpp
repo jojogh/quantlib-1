@@ -4,8 +4,9 @@
  Copyright (C) 2005, 2006, 2007 Eric Ehlers
  Copyright (C) 2005 Aurelien Chanudet
  Copyright (C) 2005 Plamen Neykov
- Copyright (C) 2006, 2007, 2008, 2009, 2012 Ferdinando Ametrano
+ Copyright (C) 2006, 2007, 2008, 2009, 2012, 2015 Ferdinando Ametrano
  Copyright (C) 2007 Marco Bianchetti
+ Copyright (C) 2015 Maddalena Zanzi
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -29,6 +30,8 @@
 #include <ql/types.hpp>
 #include <ql/time/businessdayconvention.hpp>
 #include <ql/time/frequency.hpp>
+#include <ql/instruments/futures.hpp>
+#include <ql/termstructures/bootstraphelper.hpp>
 
 namespace QuantLib {
     class YieldTermStructure;
@@ -50,6 +53,7 @@ namespace QuantLib {
     class Bond;
     template <class T>
     class Handle;
+
 }
 
 namespace QuantLibAddin {
@@ -61,8 +65,10 @@ namespace QuantLibAddin {
                                     DeposBeforeFirstFuturesStartDatePlusOne,
                                     DeposBeforeFirstFuturesExpiryDate
         };
+        std::string quoteName() { return quoteName_; }
       protected:
         OH_LIB_CTOR(RateHelper, QuantLib::RateHelper);
+        std::string quoteName_;
     };
 
     class DepositRateHelper : public RateHelper {
@@ -89,6 +95,7 @@ namespace QuantLibAddin {
         FuturesRateHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
             const QuantLib::Handle<QuantLib::Quote>& price,
+            QuantLib::Futures::Type type,
             const QuantLib::Date& immDate,
             const boost::shared_ptr<QuantLib::IborIndex>& iborIndex,
             const QuantLib::Handle<QuantLib::Quote>& convAdj,
@@ -96,6 +103,7 @@ namespace QuantLibAddin {
         FuturesRateHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
             const QuantLib::Handle<QuantLib::Quote>& price,
+            QuantLib::Futures::Type type,
             const QuantLib::Date& immDate,
             QuantLib::Natural lengthInMonths,
             const QuantLib::Calendar& calendar,
@@ -107,6 +115,7 @@ namespace QuantLibAddin {
         FuturesRateHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
             const QuantLib::Handle<QuantLib::Quote>& price,
+            QuantLib::Futures::Type type,
             const QuantLib::Date& immDate,
             const QuantLib::Date& endDate,
             const QuantLib::DayCounter& dayCounter,
@@ -123,10 +132,13 @@ namespace QuantLibAddin {
             const QuantLib::Handle<QuantLib::Quote>& spread,
             const QuantLib::Period& forwardStart,
             const QuantLib::Handle<QuantLib::YieldTermStructure>& discount,
+            QuantLib::Pillar::Choice pillarChoice,
+            QuantLib::Date customPillar,
             bool permanent);
         SwapRateHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
             const QuantLib::Handle<QuantLib::Quote>& quote,
+            QuantLib::Natural settlementDays,
             const QuantLib::Period& p,
             const QuantLib::Calendar& calendar,
             const QuantLib::Frequency& fixedFrequency,
@@ -136,6 +148,8 @@ namespace QuantLibAddin {
             const QuantLib::Handle<QuantLib::Quote>& spread,
             const QuantLib::Period& forwardStart,
             const QuantLib::Handle<QuantLib::YieldTermStructure>& discount,
+            QuantLib::Pillar::Choice pillarChoice,
+            QuantLib::Date customPillar,
             bool permanent);
      };
 
@@ -146,6 +160,8 @@ namespace QuantLibAddin {
             const QuantLib::Handle<QuantLib::Quote>& rate,
             QuantLib::Period periodToStart,
             const boost::shared_ptr<QuantLib::IborIndex>& iborIndex,
+            QuantLib::Pillar::Choice pillarChoice,
+            QuantLib::Date customPillar,
             bool permanent);
         FraRateHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
@@ -157,6 +173,8 @@ namespace QuantLibAddin {
             QuantLib::BusinessDayConvention convention,
             bool endOfMonth,
             const QuantLib::DayCounter& dayCounter,
+            QuantLib::Pillar::Choice pillarChoice,
+            QuantLib::Date customPillar,
             bool permanent);
     };
 
@@ -188,8 +206,9 @@ namespace QuantLibAddin {
       public:
         BondHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
-            const QuantLib::Handle<QuantLib::Quote>& cleanPrice,
+            const QuantLib::Handle<QuantLib::Quote>& price,
             const boost::shared_ptr<QuantLib::Bond>& bond,
+            const bool useCleanPrice,
             bool permanent);
     };
 
@@ -197,7 +216,7 @@ namespace QuantLibAddin {
       public:
         FixedRateBondHelper(
             const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
-            const QuantLib::Handle<QuantLib::Quote>& cleanPrice,
+            const QuantLib::Handle<QuantLib::Quote>& price,
             QuantLib::Natural settlementDays,
             QuantLib::Real faceAmount,
             const boost::shared_ptr<QuantLib::Schedule>& schedule,
@@ -206,8 +225,32 @@ namespace QuantLibAddin {
             QuantLib::BusinessDayConvention paymentConvention,
             QuantLib::Real redemption,
             const QuantLib::Date& issueDate,
+            const QuantLib::Calendar& paymentCalendar,
+            const QuantLib::Period& exCouponPeriod,
+            const QuantLib::Calendar& exCouponCalendar,
+            const QuantLib::BusinessDayConvention exCouponConvention,
+            bool exCouponEndOfMonth,
+            const bool useCleanPrice,
             bool permanent);
     };
+
+    class FxSwapRateHelper : public RateHelper {
+    public:
+        FxSwapRateHelper(
+         const boost::shared_ptr<ObjectHandler::ValueObject>& properties,
+         const QuantLib::Handle<QuantLib::Quote>& fwdPoint,
+         const QuantLib::Handle<QuantLib::Quote>& spotFx,
+         const QuantLib::Period& tenor,
+         QuantLib::Natural fixingDays,
+         const QuantLib::Calendar& calendar,
+         QuantLib::BusinessDayConvention convention,
+         bool endOfMonth,
+         bool isFxBaseCurrencyCollateralCurrency,
+         const QuantLib::Handle<QuantLib::YieldTermStructure>& collateralCurve,
+         bool permanent);
+
+    };
+
 
 
     // Processes the set of curve bootstrapping instruments

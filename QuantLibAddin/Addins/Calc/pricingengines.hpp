@@ -1,7 +1,8 @@
 
 /*  
- Copyright (C) 2006, 2007, 2008 Ferdinando Ametrano
+ Copyright (C) 2006, 2007, 2008, 2012 Ferdinando Ametrano
  Copyright (C) 2007 Eric Ehlers
+ Copyright (C) 2016 Stefano Fondi
  
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -26,71 +27,127 @@
 #ifndef ql_calc_pricingengines_hpp
 #define ql_calc_pricingengines_hpp
 
-    STRING SAL_CALL qlAnalyticCapFloorEngine(
-        const STRING &ObjectId,
-        const STRING &HandleModel,
-        const ANY &Permanent,
+    SEQSEQ(ANY) SAL_CALL qlAnalyticCapFloorEngine(
+        const ANY &ObjectId,
+        const ANY &HandleModel,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlBinomialPricingEngine(
-        const STRING &ObjectId,
-        const STRING &EngineID,
-        const STRING &ProcessID,
-        sal_Int32 TimeSteps,
-        const ANY &Permanent,
+    SEQSEQ(ANY) SAL_CALL qlBachelierCapFloorEngine(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &VolTS,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlBlackCapFloorEngine(
-        const STRING &ObjectId,
-        const STRING &YieldCurve,
-        const STRING &VolTS,
-        const ANY &Permanent,
-        const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
-
-    STRING SAL_CALL qlBlackSwaptionEngine(
-        const STRING &ObjectId,
-        const STRING &YieldCurve,
-        const STRING &VolTS,
-        const ANY &Permanent,
-        const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
-
-    STRING SAL_CALL qlBlackSwaptionEngine2(
-        const STRING &ObjectId,
-        const STRING &YieldCurve,
-        const STRING &Vol,
+    SEQSEQ(ANY) SAL_CALL qlBachelierCapFloorEngine2(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &Vol,
         const ANY &DayCounter,
-        const ANY &Permanent,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlBondEngine(
-        const STRING &ObjectId,
-        const STRING &YieldCurve,
-        const ANY &Permanent,
+    SEQSEQ(ANY) SAL_CALL qlBinomialPricingEngine(
+        const ANY &ObjectId,
+        const ANY &EngineID,
+        const ANY &ProcessID,
+        const ANY &TimeSteps,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlDiscountingSwapEngine(
-        const STRING &ObjectId,
-        const STRING &YieldCurve,
-        const ANY &IncludeSettlDate,
+    SEQSEQ(ANY) SAL_CALL qlBlackCapFloorEngine(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &VolTS,
+        const ANY &Displacement,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlBlackCapFloorEngine2(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &Vol,
+        const ANY &Displacement,
+        const ANY &DayCounter,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlBlackSwaptionEngine(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &VolTS,
+        const ANY &Displacement,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlBlackSwaptionEngine2(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const ANY &Vol,
+        const ANY &Displacement,
+        const ANY &DayCounter,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlBondEngine(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlDiscountingSwapEngine(
+        const ANY &ObjectId,
+        const ANY &YieldCurve,
+        const sal_Int32 IncludeSettlDate,
         const ANY &SettlementDate,
         const ANY &NpvDate,
-        const ANY &Permanent,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlPricingEngine(
-        const STRING &ObjectId,
-        const STRING &EngineID,
-        const STRING &ProcessID,
-        const ANY &Permanent,
+    SEQSEQ(ANY) SAL_CALL qlJamshidianSwaptionEngine(
+        const ANY &ObjectId,
+        const ANY &Model,
+        const ANY &YieldCurve,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlModelG2SwaptionEngine(
+        const ANY &ObjectId,
+        const ANY &Model,
+        const ANY &Range,
+        const ANY &Intervals,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlPricingEngine(
+        const ANY &ObjectId,
+        const ANY &EngineID,
+        const ANY &ProcessID,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
+
+    SEQSEQ(ANY) SAL_CALL qlTreeSwaptionEngine(
+        const ANY &ObjectId,
+        const ANY &Model,
+        const ANY &Nsteps,
+        const ANY &YieldCurve,
+        const sal_Int32 Permanent,
+        const ANY &Trigger,
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
 
 

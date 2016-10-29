@@ -2,7 +2,7 @@
 
 /*
  Copyright (C) 2006 Klaus Spanderen
- Copyright (C) 2010 Kakhkhor Abdijalilov  
+ Copyright (C) 2010 Kakhkhor Abdijalilov
  
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -26,7 +26,17 @@
 #include <ql/math/integrals/gaussianquadratures.hpp>
 #include <ql/methods/montecarlo/lsmbasissystem.hpp>
 
+#if defined(__GNUC__) && (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
+
 #include <boost/bind.hpp>
+
+#if defined(__GNUC__) && (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4))
+#pragma GCC diagnostic pop
+#endif
+
 #include <set>
 #include <numeric>
 
@@ -58,7 +68,7 @@ namespace QuantLib {
            to create [Array -> Real] functor */
         class MultiDimFct : public std::unary_function<Real, Array> {
           public:
-            MultiDimFct(const VF_R b): b_(b) {
+            MultiDimFct(const VF_R& b): b_(b) {
                 QL_REQUIRE(b_.size()>0, "zero size basis");
             }
             inline Real operator()(const Array& a) const {

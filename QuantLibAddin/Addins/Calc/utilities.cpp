@@ -32,14 +32,10 @@
 #include <qlo/utilities.hpp>
 #include <ql/models/marketmodels/utilities.hpp>
 
-//#include <Addins/Calc/qladdin.hpp>
-//#include <Addins/Calc/calcutils.hpp>
-//#include <Addins/Calc/conversions.hpp>
-#include <calcaddins.hpp>
-#include <calcutils.hpp>
+#include <qladdin.hpp>
 #include <conversions.hpp>
 
-STRING SAL_CALL CalcAddins_impl::qlAddinVersion(
+SEQSEQ(ANY) SAL_CALL CalcAddins_impl::qlAddinVersion(
         const ANY &Trigger) throw(RuntimeException) {
     try {
 
@@ -51,17 +47,34 @@ STRING SAL_CALL CalcAddins_impl::qlAddinVersion(
 
 
 
-        STRING returnValueCalc;
+        ANY returnValueCalc;
         scalarToCalc(returnValueCalc, returnValue);
-        return returnValueCalc;
+
+        SEQSEQ(ANY) retAnyArray;
+        retAnyArray.realloc(1);
+        SEQ(ANY) retAnyVector(1);
+        retAnyVector[0] = returnValueCalc;
+        retAnyArray[0] = retAnyVector;        
+        return retAnyArray;
 
     } catch (const std::exception &e) {
-        OH_LOG_MESSAGE("ERROR: qlAddinVersion: " << e.what());
-        THROW_RTE;
+        do { 
+            std::ostringstream errorMsg; 
+            errorMsg << "ERROR: qlAddinVersion: " << e.what(); 
+            OH_LOG_MESSAGE(errorMsg.str());
+        
+            SEQSEQ(ANY) retAnyArray;
+            retAnyArray.realloc(1);
+            SEQ(ANY) retAnyVector(1);
+            STRING s = STRFROMASCII( errorMsg.str().c_str() );    
+            retAnyVector[0] = CSS::uno::makeAny( s );
+            retAnyArray[0] = retAnyVector;	    
+            return retAnyArray;
+        } while (false);
     }
 }
 
-STRING SAL_CALL CalcAddins_impl::qlVersion(
+SEQSEQ(ANY) SAL_CALL CalcAddins_impl::qlVersion(
         const ANY &Trigger) throw(RuntimeException) {
     try {
 
@@ -73,13 +86,30 @@ STRING SAL_CALL CalcAddins_impl::qlVersion(
 
 
 
-        STRING returnValueCalc;
+        ANY returnValueCalc;
         scalarToCalc(returnValueCalc, returnValue);
-        return returnValueCalc;
+
+        SEQSEQ(ANY) retAnyArray;
+        retAnyArray.realloc(1);
+        SEQ(ANY) retAnyVector(1);
+        retAnyVector[0] = returnValueCalc;
+        retAnyArray[0] = retAnyVector;        
+        return retAnyArray;
 
     } catch (const std::exception &e) {
-        OH_LOG_MESSAGE("ERROR: qlVersion: " << e.what());
-        THROW_RTE;
+        do { 
+            std::ostringstream errorMsg; 
+            errorMsg << "ERROR: qlVersion: " << e.what(); 
+            OH_LOG_MESSAGE(errorMsg.str());
+        
+            SEQSEQ(ANY) retAnyArray;
+            retAnyArray.realloc(1);
+            SEQ(ANY) retAnyVector(1);
+            STRING s = STRFROMASCII( errorMsg.str().c_str() );    
+            retAnyVector[0] = CSS::uno::makeAny( s );
+            retAnyArray[0] = retAnyVector;	    
+            return retAnyArray;
+        } while (false);
     }
 }
 

@@ -28,16 +28,16 @@
 #ifndef ql_calc_swaptionvolstructure_hpp
 #define ql_calc_swaptionvolstructure_hpp
 
-    STRING SAL_CALL qlConstantSwaptionVolatility(
-        const STRING &ObjectId,
+    SEQSEQ(ANY) SAL_CALL qlConstantSwaptionVolatility(
+        const ANY &ObjectId,
         const ANY &NDays,
-        const STRING &Calendar,
-        const STRING &BusinessDayConvention,
-        const STRING &Volatility,
+        const ANY &Calendar,
+        const ANY &BusinessDayConvention,
+        const ANY &Volatility,
         const ANY &DayCounter,
-        const ANY &Permanent,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
 
 

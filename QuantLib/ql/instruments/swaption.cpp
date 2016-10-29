@@ -5,6 +5,8 @@
  Copyright (C) 2006 Cristina Duminuco
  Copyright (C) 2006 Marco Bianchetti
  Copyright (C) 2007 StatPro Italia srl
+ Copyright (C) 2014 Ferdinando Ametrano
+ Copyright (C) 2016 Peter Caspers
 
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -22,10 +24,11 @@
 
 #include <ql/instruments/swaption.hpp>
 #include <ql/pricingengines/swaption/blackswaptionengine.hpp>
-//#include <ql/math/solvers1d/brent.hpp>
 #include <ql/math/solvers1d/newtonsafe.hpp>
 #include <ql/quotes/simplequote.hpp>
 #include <ql/exercise.hpp>
+
+#include <boost/make_shared.hpp>
 
 namespace QuantLib {
 
@@ -35,7 +38,9 @@ namespace QuantLib {
           public:
             ImpliedVolHelper(const Swaption&,
                              const Handle<YieldTermStructure>& discountCurve,
-                             Real targetValue);
+                             Real targetValue,
+                             Real displacement,
+                             VolatilityType type);
             Real operator()(Volatility x) const;
             Real derivative(Volatility x) const;
           private:
@@ -49,19 +54,25 @@ namespace QuantLib {
         ImpliedVolHelper::ImpliedVolHelper(
                               const Swaption& swaption,
                               const Handle<YieldTermStructure>& discountCurve,
-                              Real targetValue)
+                              Real targetValue,
+                              Real displacement,
+                              VolatilityType type)
         : discountCurve_(discountCurve), targetValue_(targetValue) {
 
             // set an implausible value, so that calculation is forced
             // at first ImpliedVolHelper::operator()(Volatility x) call
             vol_ = boost::shared_ptr<SimpleQuote>(new SimpleQuote(-1.0));
             Handle<Quote> h(vol_);
-            engine_ = boost::shared_ptr<PricingEngine>(new
-                                    BlackSwaptionEngine(discountCurve_, h));
+            if (type == Normal) {
+                engine_ = boost::make_shared<BachelierSwaptionEngine>(
+                    discountCurve_, h, Actual365Fixed());
+            } else {
+                engine_ = boost::make_shared<BlackSwaptionEngine>(
+                    discountCurve_, h, Actual365Fixed(), displacement);
+            }
             swaption.setupArguments(engine_->getArguments());
-
-            results_ =
-                dynamic_cast<const Instrument::results*>(engine_->getResults());
+            results_ = dynamic_cast<const Instrument::results *>(
+                engine_->getResults());
         }
 
         Real ImpliedVolHelper::operator()(Volatility x) const {
@@ -103,6 +114,7 @@ namespace QuantLib {
     : Option(boost::shared_ptr<Payoff>(), exercise), swap_(swap),
       settlementType_(delivery) {
         registerWith(swap_);
+        registerWithObservables(swap_);
     }
 
     bool Swaption::isExpired() const {
@@ -129,18 +141,19 @@ namespace QuantLib {
         QL_REQUIRE(exercise, "exercise not set");
     }
 
-    Volatility Swaption::impliedVolatility(
-                              Real targetValue,
-                              const Handle<YieldTermStructure>& discountCurve,
-                              Volatility guess,
-                              Real accuracy,
-                              Natural maxEvaluations,
-                              Volatility minVol,
-                              Volatility maxVol) const {
+    Volatility Swaption::impliedVolatility(Real targetValue,
+                                           const Handle<YieldTermStructure>& d,
+                                           Volatility guess,
+                                           Real accuracy,
+                                           Natural maxEvaluations,
+                                           Volatility minVol,
+                                           Volatility maxVol,
+                                           Real displacement,
+                                           VolatilityType type) const {
         //calculate();
         QL_REQUIRE(!isExpired(), "instrument expired");
 
-        ImpliedVolHelper f(*this, discountCurve, targetValue);
+        ImpliedVolHelper f(*this, d, targetValue, displacement, type);
         //Brent solver;
         NewtonSafe solver;
         solver.setMaxEvaluations(maxEvaluations);

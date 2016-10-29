@@ -153,7 +153,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="_DEBUG;x64;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				DisableLanguageExtensions="false"
@@ -364,7 +364,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="NDEBUG;x64;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -567,7 +567,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="_DEBUG;x64;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				DisableLanguageExtensions="false"
@@ -777,7 +777,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=".."
-				PreprocessorDefinitions="NDEBUG;x64;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -860,6 +860,10 @@
 				>
 			</File>
 			<File
+				RelativePath="amortizingbond.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\array.cpp"
 				>
 			</File>
@@ -892,7 +896,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\binaryoption.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\blackdeltacalculator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\blackformula.cpp"
 				>
 			</File>
 			<File
@@ -901,6 +913,10 @@
 			</File>
 			<File
 				RelativePath=".\brownianbridge.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\businessdayconventions.cpp"
 				>
 			</File>
 			<File
@@ -917,6 +933,10 @@
 			</File>
 			<File
 				RelativePath=".\cashflows.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\catbonds.cpp"
 				>
 			</File>
 			<File
@@ -960,6 +980,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\creditriskplus.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\curvestates.cpp"
 				>
 			</File>
@@ -992,6 +1016,14 @@
 				>
 			</File>
 			<File
+				RelativePath="doublebarrieroption.cpp"
+				>
+			</File>
+			<File
+				RelativePath="doublebinaryoption.cpp"
+				>
+			</File>
+			<File
 				RelativePath="europeanoption.cpp"
 				>
 			</File>
@@ -1008,7 +1040,11 @@
 				>
 			</File>
 			<File
-				RelativePath="factorial.cpp"
+				RelativePath=".\extensibleoptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="functions.cpp"
 				>
 			</File>
 			<File
@@ -1040,7 +1076,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\gsr.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\hestonmodel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\hestonslvmodel.cpp"
 				>
 			</File>
 			<File
@@ -1168,7 +1212,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\noarbsabr.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\nthtodefault.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\numericaldifferentiation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\observable.cpp"
 				>
 			</File>
 			<File
@@ -1196,6 +1252,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\partialtimebarrieroption.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\pathgenerator.cpp"
 				>
 			</File>
@@ -1208,6 +1268,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\piecewisezerospreadedtermstructure.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\quantooption.cpp"
 				>
 			</File>
@@ -1217,6 +1281,10 @@
 			</File>
 			<File
 				RelativePath=".\rangeaccrual.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\riskneutraldensitycalculator.cpp"
 				>
 			</File>
 			<File
@@ -1253,10 +1321,6 @@
 			</File>
 			<File
 				RelativePath="stats.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\surface.cpp"
 				>
 			</File>
 			<File
@@ -1308,6 +1372,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\twoassetcorrelationoption.cpp"
+				>
+			</File>
+			<File
 				RelativePath="utilities.cpp"
 				>
 			</File>
@@ -1332,7 +1400,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\writerextensibleoption.cpp"
+				RelativePath=".\zabr.cpp"
 				>
 			</File>
 		</Filter>
@@ -1342,6 +1410,10 @@
 			>
 			<File
 				RelativePath="americanoption.hpp"
+				>
+			</File>
+			<File
+				RelativePath="amortizingbond.hpp"
 				>
 			</File>
 			<File
@@ -1377,7 +1449,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\binaryoption.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\blackdeltacalculator.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\blackformula.hpp"
 				>
 			</File>
 			<File
@@ -1386,6 +1466,10 @@
 			</File>
 			<File
 				RelativePath=".\brownianbridge.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\businessdayconventions.hpp"
 				>
 			</File>
 			<File
@@ -1402,6 +1486,10 @@
 			</File>
 			<File
 				RelativePath=".\cashflows.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\catbonds.hpp"
 				>
 			</File>
 			<File
@@ -1445,6 +1533,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\creditriskplus.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\curvestates.hpp"
 				>
 			</File>
@@ -1477,6 +1569,14 @@
 				>
 			</File>
 			<File
+				RelativePath="doublebarrieroption.hpp"
+				>
+			</File>
+			<File
+				RelativePath="doublebinaryoption.hpp"
+				>
+			</File>
+			<File
 				RelativePath="europeanoption.hpp"
 				>
 			</File>
@@ -1493,7 +1593,11 @@
 				>
 			</File>
 			<File
-				RelativePath="factorial.hpp"
+				RelativePath=".\extensibleoptions.hpp"
+				>
+			</File>
+			<File
+				RelativePath="functions.hpp"
 				>
 			</File>
 			<File
@@ -1525,7 +1629,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\gsr.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\hestonmodel.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\hestonslvmodel.hpp"
 				>
 			</File>
 			<File
@@ -1653,7 +1765,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\noarbsabr.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\nthtodefault.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\numericaldifferentiation.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\observable.hpp"
 				>
 			</File>
 			<File
@@ -1681,6 +1805,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\paralleltestrunner.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\partialtimebarrieroption.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\pathgenerator.hpp"
 				>
 			</File>
@@ -1693,6 +1825,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\piecewisezerospreadedtermstructure.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\quantooption.hpp"
 				>
 			</File>
@@ -1702,6 +1838,10 @@
 			</File>
 			<File
 				RelativePath=".\rangeaccrual.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\riskneutraldensitycalculator.hpp"
 				>
 			</File>
 			<File
@@ -1738,10 +1878,6 @@
 			</File>
 			<File
 				RelativePath="stats.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\surface.hpp"
 				>
 			</File>
 			<File
@@ -1797,6 +1933,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\twoassetcorrelationoption.hpp"
+				>
+			</File>
+			<File
 				RelativePath="utilities.hpp"
 				>
 			</File>
@@ -1821,7 +1961,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\writerextensibleoption.hpp"
+				RelativePath=".\zabr.hpp"
 				>
 			</File>
 		</Filter>

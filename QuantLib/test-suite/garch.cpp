@@ -27,7 +27,7 @@
 #include <ql/math/distributions/normaldistribution.hpp>
 
 using namespace QuantLib;
-using namespace boost::unit_test_framework;
+using boost::unit_test_framework::test_suite;
 
 namespace {
 
@@ -63,7 +63,7 @@ namespace {
 
 void GARCHTest::testCalibration() {
 
-    BOOST_TEST_MESSAGE("Testing GARCH model calibration ...");
+    BOOST_TEST_MESSAGE("Testing GARCH model calibration...");
 
     Date start(7, July, 1962), d = start;
     TimeSeries<Volatility> ts;
@@ -79,9 +79,6 @@ void GARCHTest::testCalibration() {
 
     // Default calibration; works fine in most cases
     Garch11 cgarch1(ts);
-    Real f1 = cgarch1.logLikelihood();
-    Real f2 = -cgarch1.costFunction(ts.cbegin_values(), ts.cend_values(),
-                                    garch.alpha(), garch.beta(), garch.omega());
 
     Results calibrated = { 0.207592, 0.281979, 0.204647, -0.0217413 };
 
@@ -175,7 +172,7 @@ namespace {
 }
 
 void GARCHTest::testCalculation() {
-    BOOST_TEST_MESSAGE("Testing GARCH model calculation ...");
+    BOOST_TEST_MESSAGE("Testing GARCH model calculation...");
     Date d(7, July, 1962);
     TimeSeries<Volatility> ts;
     Garch11 garch(0.2, 0.3, 0.4);

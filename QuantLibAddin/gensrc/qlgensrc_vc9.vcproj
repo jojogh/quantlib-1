@@ -108,6 +108,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\metadata\functions\basketlossmodels.xml"
+				>
+			</File>
+			<File
 				RelativePath="metadata\functions\bonds.xml"
 				>
 			</File>
@@ -117,6 +121,10 @@
 			</File>
 			<File
 				RelativePath="metadata\functions\calendar.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\metadata\functions\calibrationhelpers.xml"
 				>
 			</File>
 			<File
@@ -140,15 +148,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\metadata\functions\credit.xml"
-				>
-			</File>
-			<File
 				RelativePath="metadata\functions\date.xml"
 				>
 			</File>
 			<File
 				RelativePath="metadata\functions\daycounter.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\metadata\functions\defaultbasket.xml"
 				>
 			</File>
 			<File
@@ -177,6 +185,10 @@
 			</File>
 			<File
 				RelativePath="metadata\functions\interpolation.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\metadata\functions\latentmodels.xml"
 				>
 			</File>
 			<File

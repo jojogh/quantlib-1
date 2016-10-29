@@ -1,6 +1,7 @@
 
 /*  
  Copyright (C) 2006, 2007, 2008 Ferdinando Ametrano
+ Copyright (C) 2016 Stefano Fondi
  
  This file is part of QuantLib, a free-software/open-source library
  for financial quantitative analysts and developers - http://quantlib.org/
@@ -25,23 +26,25 @@
 #ifndef ql_calc_capletvolstructure_hpp
 #define ql_calc_capletvolstructure_hpp
 
-    STRING SAL_CALL qlConstantOptionletVolatility(
-        const STRING &ObjectId,
+    SEQSEQ(ANY) SAL_CALL qlConstantOptionletVolatility(
+        const ANY &ObjectId,
         const ANY &NDays,
-        const STRING &Calendar,
-        const STRING &BusinessDayConvention,
-        const STRING &Volatility,
+        const ANY &Calendar,
+        const ANY &BusinessDayConvention,
+        const ANY &Volatility,
         const ANY &DayCounter,
-        const ANY &Permanent,
+        const ANY &VolatilityType,
+        const ANY &Displacement,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
-    STRING SAL_CALL qlRelinkableHandleOptionletVolatilityStructure(
-        const STRING &ObjectId,
+    SEQSEQ(ANY) SAL_CALL qlRelinkableHandleOptionletVolatilityStructure(
+        const ANY &ObjectId,
         const ANY &CurrentLink,
-        const ANY &Permanent,
+        const sal_Int32 Permanent,
         const ANY &Trigger,
-        sal_Int32 Overwrite) throw(RuntimeException);
+        const sal_Int32 Overwrite) throw(RuntimeException);
 
 
 

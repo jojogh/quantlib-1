@@ -161,12 +161,20 @@ namespace {
                          ii->frequency(),ii->interpolated(), baseZeroRate,
                          Handle<YieldTermStructure>(yTS), helpers)));
         }
+
+        // teardown
+        ~CommonVars() {
+            // break circular references and allow curves to be destroyed
+            cpiTS.linkTo(boost::shared_ptr<ZeroInflationTermStructure>());
+        }
     };
 
 }
 
 
 void InflationCPIBondTest::testCleanPrice() {
+    IndexManager::instance().clearHistories();
+  
     CommonVars common;
 
     Real notional = 1000000.0;

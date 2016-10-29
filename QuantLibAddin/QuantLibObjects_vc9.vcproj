@@ -75,7 +75,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib\QuantLibObjects-vc90-mt-1_2_0.lib"
+				OutputFile="lib\QuantLibObjects-vc90-mt-1_8_0.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -156,7 +156,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib\QuantLibObjects-vc90-mt-s-1_2_0.lib"
+				OutputFile="lib\QuantLibObjects-vc90-mt-s-1_8_0.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -235,7 +235,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib\QuantLibObjects-vc90-mt-sgd-1_2_0.lib"
+				OutputFile="lib\QuantLibObjects-vc90-mt-sgd-1_8_0.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -314,7 +314,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib\QuantLibObjects-vc90-mt-gd-1_2_0.lib"
+				OutputFile="lib\QuantLibObjects-vc90-mt-gd-1_8_0.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -467,6 +467,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\qlo\valueobjects\vo_basketlossmodels.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_basketlossmodels.hpp"
+				>
+			</File>
+			<File
 				RelativePath="qlo\valueobjects\vo_bonds.cpp"
 				>
 			</File>
@@ -488,6 +496,14 @@
 			</File>
 			<File
 				RelativePath=".\qlo\valueobjects\vo_btp.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_calibrationhelpers.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_calibrationhelpers.hpp"
 				>
 			</File>
 			<File
@@ -563,6 +579,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\qlo\valueobjects\vo_defaultbasket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_defaultbasket.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\qlo\valueobjects\vo_defaulttermstructures.cpp"
 				>
 			</File>
@@ -620,6 +644,14 @@
 			</File>
 			<File
 				RelativePath="qlo\valueobjects\vo_interpolation.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_latentmodels.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\valueobjects\vo_latentmodels.hpp"
 				>
 			</File>
 			<File
@@ -1015,6 +1047,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\qlo\calibrationhelpers.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\calibrationhelpers.hpp"
+				>
+			</File>
+			<File
 				RelativePath="qlo\capfloor.cpp"
 				>
 			</File>
@@ -1023,11 +1063,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\qlo\cdsoption.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\cdsoption.hpp"
+				>
+			</File>
+			<File
 				RelativePath="qlo\cliquetoption.cpp"
 				>
 			</File>
 			<File
 				RelativePath="qlo\cliquetoption.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\creditdefaultswap.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\creditdefaultswap.hpp"
 				>
 			</File>
 			<File
@@ -1371,51 +1427,51 @@
 			Name="loop"
 			>
 			<File
-				RelativePath="qlo\loop\loop_abcd.hpp"
+				RelativePath=".\qlo\loop\loop_abcd.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_bonds.hpp"
+				RelativePath=".\qlo\loop\loop_calendar.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_calendar.hpp"
+				RelativePath=".\qlo\loop\loop_capletvolstructure.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_capletvolstructure.hpp"
+				RelativePath=".\qlo\loop\loop_date.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_date.hpp"
+				RelativePath=".\qlo\loop\loop_daycounter.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_daycounter.hpp"
+				RelativePath=".\qlo\loop\loop_defaulttermstructures.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_index.hpp"
+				RelativePath=".\qlo\loop\loop_index.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_interpolation.hpp"
+				RelativePath=".\qlo\loop\loop_interpolation.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_swaptionvolstructure.hpp"
+				RelativePath=".\qlo\loop\loop_swaptionvolstructure.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_termstructures.hpp"
+				RelativePath=".\qlo\loop\loop_termstructures.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_timeseries.hpp"
+				RelativePath=".\qlo\loop\loop_timeseries.hpp"
 				>
 			</File>
 			<File
-				RelativePath="qlo\loop\loop_valueobject.hpp"
+				RelativePath=".\qlo\loop\loop_valueobjects.hpp"
 				>
 			</File>
 		</Filter>
@@ -1562,6 +1618,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\qlo\serialization\create\create_basketlossmodels.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_basketlossmodels.hpp"
+					>
+				</File>
+				<File
 					RelativePath="qlo\serialization\create\create_bonds.cpp"
 					>
 				</File>
@@ -1583,6 +1647,14 @@
 				</File>
 				<File
 					RelativePath=".\qlo\serialization\create\create_btp.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_calibrationhelpers.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_calibrationhelpers.hpp"
 					>
 				</File>
 				<File
@@ -1658,6 +1730,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\qlo\serialization\create\create_defaultbasket.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_defaultbasket.hpp"
+					>
+				</File>
+				<File
 					RelativePath=".\qlo\serialization\create\create_defaulttermstructures.cpp"
 					>
 				</File>
@@ -1711,6 +1791,14 @@
 				</File>
 				<File
 					RelativePath="qlo\serialization\create\create_interpolation.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_latentmodels.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\create\create_latentmodels.hpp"
 					>
 				</File>
 				<File
@@ -1986,6 +2074,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\qlo\serialization\register\serialization_basketlossmodels.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_basketlossmodels.hpp"
+					>
+				</File>
+				<File
 					RelativePath="qlo\serialization\register\serialization_bonds.cpp"
 					>
 				</File>
@@ -2007,6 +2103,14 @@
 				</File>
 				<File
 					RelativePath=".\qlo\serialization\register\serialization_btp.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_calibrationhelpers.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_calibrationhelpers.hpp"
 					>
 				</File>
 				<File
@@ -2082,6 +2186,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\qlo\serialization\register\serialization_defaultbasket.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_defaultbasket.hpp"
+					>
+				</File>
+				<File
 					RelativePath=".\qlo\serialization\register\serialization_defaulttermstructures.cpp"
 					>
 				</File>
@@ -2135,6 +2247,14 @@
 				</File>
 				<File
 					RelativePath="qlo\serialization\register\serialization_interpolation.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_latentmodels.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\qlo\serialization\register\serialization_latentmodels.hpp"
 					>
 				</File>
 				<File
@@ -2467,6 +2587,14 @@
 			Name="credit"
 			>
 			<File
+				RelativePath=".\qlo\basketlossmodels.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\basketlossmodels.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\qlo\credit.cpp"
 				>
 			</File>
@@ -2475,11 +2603,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\qlo\defaultbasket.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\defaultbasket.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\qlo\defaulttermstructures.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\qlo\defaulttermstructures.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\latentmodels.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\qlo\latentmodels.hpp"
 				>
 			</File>
 		</Filter>
